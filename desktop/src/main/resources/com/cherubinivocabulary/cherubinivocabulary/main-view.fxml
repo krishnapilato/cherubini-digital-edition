@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.cherubinivocabulary.cherubinivocabulary.ui.LetterStrip?>
+<?import com.cherubinivocabulary.cherubinivocabulary.ui.MarkedText?>
+<?import com.cherubinivocabulary.cherubinivocabulary.ui.SearchSuggestions?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.cherubinivocabulary.cherubinivocabulary.ui.MainController"
+           styleClass="app">
+
+    <fx:define>
+        <ToggleGroup fx:id="resultTabs"/>
+        <ToggleGroup fx:id="abbreviationCategories"/>
+    </fx:define>
+
+    <BorderPane>
+        <top>
+            <VBox>
+                <HBox styleClass="header" alignment="CENTER_LEFT" spacing="14">
+                    <HBox fx:id="searchBox" styleClass="search-box" alignment="CENTER_LEFT" spacing="6" HBox.hgrow="ALWAYS" maxWidth="520">
+                        <FontIcon iconLiteral="fas-search"/>
+                        <TextField fx:id="searchField" promptText="Cerca un lemma o fino a quattro parole" HBox.hgrow="ALWAYS">
+                            <tooltip><Tooltip text="Ricerca mentre scrivi · Invio la salva nella cronologia · Esc azzera"/></tooltip>
+                        </TextField>
+                        <Button fx:id="clearSearchButton" styleClass="subtle, icon-only" onAction="#clearSearch" visible="false">
+                            <graphic><FontIcon iconLiteral="fas-times"/></graphic>
+                            <tooltip><Tooltip text="Azzera la ricerca"/></tooltip>
+                        </Button>
+                    </HBox>
+                    <CheckBox fx:id="containedSwitch" text="Parole contenute" styleClass="switch" selected="true">
+                        <tooltip><Tooltip text="Trova anche le parole che contengono quelle scritte (ferro → ferroso)"/></tooltip>
+                    </CheckBox>
+                    <Region HBox.hgrow="SOMETIMES"/>
+                    <ToggleButton fx:id="abbreviationsToggle" text="Abbreviazioni">
+                        <graphic><FontIcon iconLiteral="fas-list"/></graphic>
+                        <tooltip><Tooltip text="Abbreviazioni usate nel Vocabolario"/></tooltip>
+                    </ToggleButton>
+                </HBox>
+                <Label fx:id="wordsWarning" styleClass="warning" managed="false" visible="false" maxWidth="Infinity"/>
+            </VBox>
+        </top>
+
+        <center>
+            <HBox spacing="10">
+                <padding>
+                    <Insets right="14" bottom="8" left="14"/>
+                </padding>
+
+                <VBox styleClass="pane" prefWidth="300" minWidth="300" maxWidth="300">
+                    <VBox fx:id="browseHeader" spacing="2">
+                        <LetterStrip fx:id="letterStrip"/>
+                        <HBox styleClass="list-header" alignment="BASELINE_LEFT">
+                            <Label fx:id="listTitle" styleClass="list-title"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="listCount" styleClass="secondary"/>
+                        </HBox>
+                    </VBox>
+                    <VBox fx:id="searchHeader" managed="false" visible="false">
+                        <HBox styleClass="tabs" spacing="18">
+                            <ToggleButton fx:id="lemmasTab" text="Lemmi" toggleGroup="$resultTabs" styleClass="tab">
+                                <tooltip><Tooltip text="Voci con le parole nel lemma"/></tooltip>
+                            </ToggleButton>
+                            <ToggleButton fx:id="definitionsTab" text="Definizioni" toggleGroup="$resultTabs" styleClass="tab" selected="true">
+                                <tooltip><Tooltip text="Voci con le parole nella definizione"/></tooltip>
+                            </ToggleButton>
+                        </HBox>
+                        <Label fx:id="searchSummary" styleClass="secondary, summary" wrapText="true"/>
+                    </VBox>
+                    <ListView fx:id="lemmaList" VBox.vgrow="ALWAYS" styleClass="lemma-list"/>
+                    <HBox fx:id="printBar" styleClass="print-bar" alignment="CENTER_LEFT" spacing="4" managed="false" visible="false">
+                        <Label fx:id="printCount" styleClass="print-count" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                        <Button text="Tutti" styleClass="subtle" minWidth="-Infinity" onAction="#selectAllToPrint">
+                            <tooltip><Tooltip text="Seleziona tutte le voci da stampare"/></tooltip>
+                        </Button>
+                        <Button fx:id="deselectButton" text="Nessuno" styleClass="subtle" minWidth="-Infinity" onAction="#deselectAll">
+                            <tooltip><Tooltip text="Deseleziona tutte le voci"/></tooltip>
+                        </Button>
+                        <Button fx:id="printButton" styleClass="accent, icon-only" minWidth="-Infinity" onAction="#print">
+                            <graphic><FontIcon iconLiteral="fas-print"/></graphic>
+                            <tooltip><Tooltip text="Stampa le voci selezionate"/></tooltip>
+                        </Button>
+                    </HBox>
+                </VBox>
+
+                <VBox styleClass="card" HBox.hgrow="ALWAYS" prefWidth="0" minWidth="320">
+                    <HBox styleClass="toolbar" alignment="CENTER_LEFT" spacing="2">
+                        <Button fx:id="firstButton" styleClass="subtle, icon-only" onAction="#showFirst">
+                            <graphic><FontIcon iconLiteral="fas-step-backward"/></graphic>
+                            <tooltip><Tooltip text="Prima voce"/></tooltip>
+                        </Button>
+                        <Button fx:id="previousButton" styleClass="subtle, icon-only" onAction="#showPrevious">
+                            <graphic><FontIcon iconLiteral="fas-chevron-left"/></graphic>
+                            <tooltip><Tooltip text="Voce precedente"/></tooltip>
+                        </Button>
+                        <Label fx:id="positionPrefix" styleClass="secondary"/>
+                        <TextField fx:id="positionField" styleClass="position">
+                            <tooltip><Tooltip text="Scrivi un numero e premi Invio per andare a quella voce"/></tooltip>
+                        </TextField>
+                        <Label fx:id="positionTotal" styleClass="secondary"/>
+                        <Button fx:id="nextButton" styleClass="subtle, icon-only" onAction="#showNext">
+                            <graphic><FontIcon iconLiteral="fas-chevron-right"/></graphic>
+                            <tooltip><Tooltip text="Voce successiva"/></tooltip>
+                        </Button>
+                        <Button fx:id="lastButton" styleClass="subtle, icon-only" onAction="#showLast">
+                            <graphic><FontIcon iconLiteral="fas-step-forward"/></graphic>
+                            <tooltip><Tooltip text="Ultima voce"/></tooltip>
+                        </Button>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <HBox fx:id="occurrenceBar" alignment="CENTER_LEFT" spacing="2" managed="false" visible="false">
+                            <Label fx:id="occurrenceLabel" styleClass="secondary"/>
+                            <Button fx:id="previousOccurrenceButton" styleClass="subtle, icon-only" onAction="#previousOccurrence">
+                                <graphic><FontIcon iconLiteral="fas-chevron-up"/></graphic>
+                                <tooltip><Tooltip text="Occorrenza precedente"/></tooltip>
+                            </Button>
+                            <Button fx:id="nextOccurrenceButton" styleClass="subtle, icon-only" onAction="#nextOccurrence">
+                                <graphic><FontIcon iconLiteral="fas-chevron-down"/></graphic>
+                                <tooltip><Tooltip text="Occorrenza successiva (F3)"/></tooltip>
+                            </Button>
+                            <CheckBox fx:id="selectedToPrint" text="Da stampare" onAction="#toggleSelectedToPrint"/>
+                        </HBox>
+                    </HBox>
+                    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="reading">
+                        <VBox spacing="6" styleClass="reading-content">
+                            <Label fx:id="lemmaNumber" styleClass="secondary"/>
+                            <MarkedText fx:id="lemmaTitle" runStyle="reading-lemma"/>
+                            <MarkedText fx:id="definitionText" runStyle="reading-definition" lineSpacing="4"/>
+                        </VBox>
+                    </ScrollPane>
+                </VBox>
+
+                <VBox fx:id="abbreviationsPane" styleClass="pane" prefWidth="270" minWidth="270" maxWidth="270" managed="false" visible="false">
+                    <HBox styleClass="pane-header" alignment="CENTER_LEFT">
+                        <Label text="Abbreviazioni" styleClass="list-title" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                        <Button styleClass="subtle, icon-only" onAction="#closeAbbreviations">
+                            <graphic><FontIcon iconLiteral="fas-times"/></graphic>
+                            <tooltip><Tooltip text="Chiudi le abbreviazioni"/></tooltip>
+                        </Button>
+                    </HBox>
+                    <HBox styleClass="tabs" spacing="12">
+                        <ToggleButton text="Autori" userData="Autori" toggleGroup="$abbreviationCategories" styleClass="tab"/>
+                        <ToggleButton text="Abbrev." userData="Abbrev." toggleGroup="$abbreviationCategories" styleClass="tab"/>
+                        <ToggleButton text="Scritt." userData="Scritt." toggleGroup="$abbreviationCategories" styleClass="tab"/>
+                        <ToggleButton text="Contr." userData="Contr." toggleGroup="$abbreviationCategories" styleClass="tab"/>
+                    </HBox>
+                    <ListView fx:id="abbreviationList" VBox.vgrow="ALWAYS" styleClass="lemma-list"/>
+                    <VBox fx:id="abbreviationDetail" styleClass="detail" spacing="4">
+                        <HBox alignment="CENTER_LEFT">
+                            <Label fx:id="abbreviationPosition" styleClass="secondary" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                            <Button fx:id="previousAbbreviationButton" styleClass="subtle, icon-only" onAction="#previousAbbreviation">
+                                <graphic><FontIcon iconLiteral="fas-chevron-up"/></graphic>
+                                <tooltip><Tooltip text="Voce precedente"/></tooltip>
+                            </Button>
+                            <Button fx:id="nextAbbreviationButton" styleClass="subtle, icon-only" onAction="#nextAbbreviation">
+                                <graphic><FontIcon iconLiteral="fas-chevron-down"/></graphic>
+                                <tooltip><Tooltip text="Voce successiva"/></tooltip>
+                            </Button>
+                        </HBox>
+                        <Label fx:id="abbreviationTitle" styleClass="detail-title" wrapText="true"/>
+                        <Label fx:id="abbreviationMeaning" wrapText="true"/>
+                        <Button text="Cerca nel vocabolario" styleClass="accent" onAction="#searchAbbreviation">
+                            <graphic><FontIcon iconLiteral="fas-search"/></graphic>
+                            <tooltip><Tooltip text="Cerca questa abbreviazione nelle definizioni"/></tooltip>
+                        </Button>
+                    </VBox>
+                </VBox>
+            </HBox>
+        </center>
+
+        <bottom>
+            <HBox styleClass="footer" spacing="12">
+                <Label fx:id="statusLabel" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                <Label text="A cura di Stefano Pilato e Khova Krishna Pilato"/>
+            </HBox>
+        </bottom>
+    </BorderPane>
+
+    <Label fx:id="toast" styleClass="toast" StackPane.alignment="BOTTOM_CENTER" mouseTransparent="true">
+        <StackPane.margin>
+            <Insets bottom="40"/>
+        </StackPane.margin>
+    </Label>
+
+    <SearchSuggestions fx:id="suggestions"/>
+</StackPane>
