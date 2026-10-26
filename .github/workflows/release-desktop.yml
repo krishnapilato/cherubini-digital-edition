@@ -18,6 +18,12 @@ jobs:
             platform: windows
           - os: macos-latest
             platform: macos
+            arch: apple-silicon
+            javafx: mac-aarch64
+          - os: macos-26-intel
+            platform: macos
+            arch: intel
+            javafx: mac
           - os: ubuntu-latest
             platform: linux
     runs-on: ${{ matrix.os }}
@@ -46,7 +52,7 @@ jobs:
           fi
 
       - name: Jar
-        run: mvn -B -q package
+        run: mvn -B -q package -Djavafx.mac.classifier=${{ matrix.javafx || 'mac-aarch64' }}
 
       - name: Java runtime
         run: >
@@ -90,7 +96,7 @@ jobs:
 
       - name: macOS zip
         if: matrix.platform == 'macos'
-        run: ditto -c -k --keepParent target/dist/Cherubini.app target/Cherubini-macos.zip
+        run: ditto -c -k --keepParent target/dist/Cherubini.app "target/Cherubini-macos-${{ matrix.arch }}.zip"
 
       - name: Linux AppImage
         if: matrix.platform == 'linux'
@@ -110,10 +116,10 @@ jobs:
 
       - uses: actions/upload-artifact@v7
         with:
-          name: cherubini-${{ matrix.platform }}
+          name: cherubini-${{ matrix.platform }}${{ matrix.arch && format('-{0}', matrix.arch) || '' }}
           path: |
             desktop/target/Cherubini-windows.zip
-            desktop/target/Cherubini-macos.zip
+            desktop/target/Cherubini-macos-*.zip
             desktop/target/Cherubini-linux-x86_64.AppImage
           if-no-files-found: ignore
 
@@ -138,7 +144,8 @@ jobs:
             | Sistema | File | Come si apre |
             |---|---|---|
             | Windows 10/11 | `Cherubini-windows.zip` | Estrai lo zip e apri `Cherubini.exe` dentro la cartella |
-            | macOS (Apple Silicon) | `Cherubini-macos.zip` | Estrai lo zip e apri `Cherubini.app` |
+            | macOS con chip Apple (M1 e successivi) | `Cherubini-macos-apple-silicon.zip` | Estrai lo zip e apri `Cherubini.app` |
+            | macOS con processore Intel | `Cherubini-macos-intel.zip` | Estrai lo zip e apri `Cherubini.app` |
             | Linux | `Cherubini-linux-x86_64.AppImage` | Rendilo eseguibile (`chmod +x`) e aprilo |
 
             ### Gli avvisi al primo avvio
@@ -146,7 +153,8 @@ jobs:
             Il programma non è firmato digitalmente (la firma ha un costo annuale), quindi il sistema chiede conferma la prima volta:
 
             - **Windows**: compare «Windows ha protetto il PC». Clicca **Ulteriori informazioni** e poi **Esegui comunque**.
-            - **macOS**: compare un avviso sullo sviluppatore. Clicca con il tasto destro su `Cherubini.app`, scegli **Apri** e conferma con **Apri**. In alternativa: Impostazioni di Sistema → Privacy e sicurezza → **Apri comunque**.
+            - **macOS**: compare «Impossibile verificare che Cherubini non contenga malware». Clicca **Fine**, poi apri Impostazioni di Sistema → **Privacy e sicurezza**, scorri fino in fondo e clicca **Apri comunque** accanto a Cherubini. Conferma con la password o il Touch ID: dalla volta successiva si apre normalmente.
+              Per sapere quale file scaricare: menu Apple → **Informazioni su questo Mac**. Se alla voce «Chip» c'è Apple M1, M2, M3, M4 o successivi, scegli la versione per chip Apple; se c'è «Processore» Intel, scegli quella Intel.
             - **Linux**: nessun avviso; serve solo rendere eseguibile il file.
 
             A cura di Stefano Pilato e Khova Krishna Pilato.

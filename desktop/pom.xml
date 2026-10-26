@@ -13,6 +13,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>27</maven.compiler.release>
         <javafx.version>27.0.1</javafx.version>
+        <javafx.mac.classifier>mac-aarch64</javafx.mac.classifier>
         <main.class>com.cherubinivocabulary.cherubinivocabulary.Launcher</main.class>
     </properties>
 
@@ -171,7 +172,7 @@
                                     <groupId>org.openjfx</groupId>
                                     <artifactId>javafx-graphics</artifactId>
                                     <version>${javafx.version}</version>
-                                    <classifier>mac-aarch64</classifier>
+                                    <classifier>${javafx.mac.classifier}</classifier>
                                     <includes>*.dylib</includes>
                                 </artifactItem>
                                 <artifactItem>
