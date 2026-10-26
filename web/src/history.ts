@@ -3,7 +3,7 @@ const LIMIT = 6;
 
 export function loadRecent(): string[] {
   try {
-    const saved = JSON.parse(localStorage.getItem(KEY) ?? "[]");
+    const saved = JSON.parse(sessionStorage.getItem(KEY) ?? "[]");
     return Array.isArray(saved) ? saved.filter((item) => typeof item === "string").slice(0, LIMIT) : [];
   } catch {
     return [];
@@ -13,11 +13,18 @@ export function loadRecent(): string[] {
 export function rememberSearch(search: string, recent: string[]): string[] {
   const cleaned = search.trim();
   if (!cleaned) return recent;
-  const updated = [cleaned, ...recent.filter((item) => item !== cleaned)].slice(0, LIMIT);
+  return save([cleaned, ...recent.filter((item) => item !== cleaned)].slice(0, LIMIT));
+}
+
+export function forgetSearch(search: string, recent: string[]): string[] {
+  return save(recent.filter((item) => item !== search));
+}
+
+function save(recent: string[]): string[] {
   try {
-    localStorage.setItem(KEY, JSON.stringify(updated));
+    sessionStorage.setItem(KEY, JSON.stringify(recent));
   } catch {
-    return updated;
+    return recent;
   }
-  return updated;
+  return recent;
 }

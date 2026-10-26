@@ -9,7 +9,7 @@ import { Reading } from "./components/Reading";
 import { ResultList } from "./components/ResultList";
 import { Toast } from "./components/Toast";
 import { TopBar } from "./components/TopBar";
-import { loadRecent, rememberSearch } from "./history";
+import { forgetSearch, loadRecent, rememberSearch } from "./history";
 import { describe, find, makeQuery, matches } from "./search";
 import { ALL, formatNumber, lemmas, lemmasOf, type Lemma } from "./vocabulary";
 
@@ -220,6 +220,7 @@ export default function App() {
               setQuery(text);
               remember(text);
             }}
+            onForget={(text) => setRecent((saved) => forgetSearch(text, saved))}
             onLetter={openLetter}
           />
         </>

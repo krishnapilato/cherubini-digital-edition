@@ -415,12 +415,32 @@ public final class MainController {
         label.getStyleClass().add("secondary");
         recentPane.getChildren().add(label);
         recent.forEach(text -> {
-            var chip = new Button(text, new FontIcon("fth-clock"));
-            chip.getStyleClass().add("chip");
-            chip.setOnAction(_ -> {
+            var search = new Button(text, new FontIcon("fth-clock"));
+            search.getStyleClass().add("chip-search");
+            search.setOnAction(_ -> {
                 query.set(text);
                 refresh();
                 remember();
+            });
+            var remove = new Button(null, new FontIcon("fth-x"));
+            remove.getStyleClass().add("chip-remove");
+            remove.setTooltip(new Tooltip("Togli dalle recenti"));
+            remove.setAccessibleText("Togli «" + text + "» dalle recenti");
+            var chip = new HBox(search, remove);
+            chip.getStyleClass().add("chip");
+            chip.setAlignment(Pos.CENTER_LEFT);
+            remove.setOnAction(_ -> {
+                var fade = new FadeTransition(Duration.millis(180), chip);
+                fade.setToValue(0);
+                var shrink = new ScaleTransition(Duration.millis(180), chip);
+                shrink.setToX(0.6);
+                shrink.setToY(0.6);
+                var vanish = new ParallelTransition(fade, shrink);
+                vanish.setOnFinished(_ -> {
+                    history.forget(text);
+                    refreshRecent();
+                });
+                vanish.play();
             });
             recentPane.getChildren().add(chip);
         });

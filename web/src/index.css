@@ -303,21 +303,53 @@ kbd {
 .chip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 5px 12px;
   border: 1px solid #dfe3df;
   border-radius: 999px;
   background: var(--surface);
-  transition: border-color 0.15s, color 0.15s;
+  transition: border-color 0.15s;
 }
 
-.chip svg {
+.chip:hover,
+.chip:focus-within {
+  border-color: var(--accent);
+}
+
+.chip-search {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 6px 5px 12px;
+  border: 0;
+  border-radius: 999px 0 0 999px;
+  background: transparent;
+  transition: color 0.15s;
+}
+
+.chip-search svg {
   color: var(--ink-soft);
 }
 
-.chip:hover {
-  border-color: var(--accent);
+.chip-search:hover {
   color: var(--accent-dark);
+}
+
+.chip-remove {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-right: 4px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink-faint);
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.chip-remove:hover {
+  background: #fdf1ef;
+  color: var(--found);
 }
 
 .letters {

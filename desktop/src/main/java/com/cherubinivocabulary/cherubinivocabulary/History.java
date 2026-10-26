@@ -20,6 +20,15 @@ final class History {
         if (cleaned.isEmpty()) return;
         List<String> updated = new ArrayList<>(List.of(cleaned));
         recent().stream().filter(previous -> !previous.equals(cleaned)).limit(LIMIT - 1).forEach(updated::add);
-        preferences.put(KEY, String.join(SEPARATOR, updated));
+        save(updated);
+    }
+
+    void forget(String search) {
+        save(recent().stream().filter(previous -> !previous.equals(search)).toList());
+    }
+
+    private void save(List<String> searches) {
+        if (searches.isEmpty()) preferences.remove(KEY);
+        else preferences.put(KEY, String.join(SEPARATOR, searches));
     }
 }

@@ -96,18 +96,46 @@
     -fx-background-radius: 999;
     -fx-border-color: #dfe3df;
     -fx-border-radius: 999;
-    -fx-padding: 6 12;
-    -fx-cursor: hand;
+    -fx-padding: 0 4 0 0;
 }
 
 .chip:hover {
     -fx-border-color: -color-accent-emphasis;
+}
+
+.chip-search {
+    -fx-background-color: transparent;
+    -fx-padding: 6 6 6 12;
+    -fx-cursor: hand;
+}
+
+.chip-search:hover {
     -fx-text-fill: -color-accent-fg;
 }
 
-.chip .ikonli-font-icon {
+.chip-search .ikonli-font-icon {
     -fx-icon-size: 14;
     -fx-icon-color: -ink-soft;
+}
+
+.chip-remove {
+    -fx-background-color: transparent;
+    -fx-background-radius: 999;
+    -fx-padding: 4;
+    -fx-cursor: hand;
+}
+
+.chip-remove .ikonli-font-icon {
+    -fx-icon-size: 13;
+    -fx-icon-color: -ink-faint;
+}
+
+.chip-remove:hover {
+    -fx-background-color: #fdf1ef;
+}
+
+.chip-remove:hover .ikonli-font-icon {
+    -fx-icon-color: -found;
 }
 
 .pill {

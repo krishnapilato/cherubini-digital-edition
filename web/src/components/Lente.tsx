@@ -1,6 +1,6 @@
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { Clock, Search } from "lucide-react";
+import { Clock, Search, X } from "lucide-react";
 import { useRef, type KeyboardEvent, type RefObject } from "react";
 import icon from "../assets/cherubini.svg";
 import { countOf, formatNumber, LETTERS, ALL } from "../vocabulary";
@@ -15,19 +15,24 @@ type Props = {
   onContained: (contained: boolean) => void;
   recent: string[];
   onRecent: (search: string) => void;
+  onForget: (search: string) => void;
   onLetter: (letter: string) => void;
 };
 
-export function Lente({ query, onQuery, onKeyDown, inputRef, contained, onContained, recent, onRecent, onLetter }: Props) {
+export function Lente({ query, onQuery, onKeyDown, inputRef, contained, onContained, recent, onRecent, onForget, onLetter }: Props) {
   const scope = useRef<HTMLElement>(null);
 
-  useGSAP(
+  const { contextSafe } = useGSAP(
     () => {
       gsap.from(".lente-item", { y: 18, opacity: 0, duration: 0.7, stagger: 0.07, ease: "power3.out" });
       gsap.from(".pill", { scale: 0.85, opacity: 0, duration: 0.4, stagger: 0.012, delay: 0.35, ease: "back.out(2)" });
     },
     { scope },
   );
+
+  const forget = contextSafe((chip: HTMLElement | null, search: string) => {
+    gsap.to(chip, { scale: 0.6, opacity: 0, duration: 0.22, ease: "power2.in", onComplete: () => onForget(search) });
+  });
 
   return (
     <main className="lente" ref={scope}>
@@ -54,10 +59,15 @@ export function Lente({ query, onQuery, onKeyDown, inputRef, contained, onContai
         <div className="lente-item recent">
           <span>Recenti</span>
           {recent.map((search) => (
-            <button key={search} type="button" className="chip" onClick={() => onRecent(search)}>
-              <Clock size={14} aria-hidden="true" />
-              {search}
-            </button>
+            <span key={search} className="chip">
+              <button type="button" className="chip-search" onClick={() => onRecent(search)}>
+                <Clock size={14} aria-hidden="true" />
+                {search}
+              </button>
+              <button type="button" className="chip-remove" aria-label={`Togli «${search}» dalle recenti`} title="Togli dalle recenti" onClick={(event) => forget(event.currentTarget.parentElement, search)}>
+                <X size={13} />
+              </button>
+            </span>
           ))}
         </div>
       )}
