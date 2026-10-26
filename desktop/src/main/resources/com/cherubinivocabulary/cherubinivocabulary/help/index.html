@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Guida · Vocabolario Cherubini</title>
+  <link rel="icon" href="icon.png">
+  <link rel="stylesheet" href="help.css">
+</head>
+<body>
+  <div class="progress" aria-hidden="true"><span></span></div>
+
+  <header class="hero">
+    <div class="hero-letters" aria-hidden="true">
+      <span class="giant g1" data-speed="0.55">A</span>
+      <span class="giant g2" data-speed="0.25">*</span>
+      <span class="giant g3" data-speed="0.8">G</span>
+      <span class="giant g4" data-speed="0.4">M</span>
+    </div>
+
+    <div class="floaters" aria-hidden="true">
+      <div class="floater f-search" data-speed="0.9" data-depth="1.6">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        ferro legno
+      </div>
+      <div class="floater f-tile" data-speed="1.3" data-depth="2.4"><b>G</b><small>224</small></div>
+      <div class="floater f-key" data-speed="0.6" data-depth="1.1"><kbd>F3</kbd></div>
+      <div class="floater f-mark" data-speed="1.1" data-depth="2">manico di <mark>ferro</mark></div>
+      <div class="floater f-switch" data-speed="0.75" data-depth="1.4"><span class="mini-switch on"><span></span></span>Parole contenute</div>
+      <div class="floater f-tile small" data-speed="1.6" data-depth="3"><b>*</b><small>2.307</small></div>
+    </div>
+
+    <div class="hero-inner">
+      <img class="hero-icon" src="icon.png" alt="" width="72" height="72">
+      <p class="eyebrow">Guida all'uso</p>
+      <h1>Vocabolario milanese–italiano</h1>
+      <p class="subtitle">Francesco Cherubini · voci tecniche</p>
+      <p class="lead">Dieci passi per cercare, leggere, sfogliare e stampare le voci del vocabolario.</p>
+      <a class="cue" href="#cercare">
+        Inizia
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </a>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="Indice">
+    <a href="#cercare"><span>01</span><span class="label">Cercare</span></a>
+    <a href="#contenute"><span>02</span><span class="label">Parole contenute</span></a>
+    <a href="#risultati"><span>03</span><span class="label">Lemmi e definizioni</span></a>
+    <a href="#occorrenze"><span>04</span><span class="label">Occorrenze</span></a>
+    <a href="#sfogliare"><span>05</span><span class="label">Sfogliare per lettera</span></a>
+    <a href="#navigare"><span>06</span><span class="label">Spostarsi tra le voci</span></a>
+    <a href="#recenti"><span>07</span><span class="label">Ricerche recenti</span></a>
+    <a href="#stampa"><span>08</span><span class="label">Stampare</span></a>
+    <a href="#abbreviazioni"><span>09</span><span class="label">Abbreviazioni</span></a>
+    <a href="#tasti"><span>10</span><span class="label">Tasti rapidi</span></a>
+  </nav>
+
+  <main>
+    <section class="chapter" id="cercare">
+      <span class="numeral" aria-hidden="true" data-speed="0.5">01</span>
+      <div class="text">
+        <p class="step">Passo 1</p>
+        <h2>Cercare</h2>
+        <p>Scrivi nel campo di ricerca: i risultati compaiono <strong>mentre scrivi</strong>, senza premere nessun pulsante.</p>
+        <p>Puoi cercare <strong>fino a quattro parole</strong>: vengono trovate solo le voci che le contengono tutte. Per esempio <kbd>ferro legno</kbd> trova gli strumenti fatti di ferro e di legno.</p>
+      </div>
+      <figure class="demo" aria-hidden="true" data-demo="typing">
+        <div class="window">
+          <div class="mock-search">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <span class="typed" data-text="ferro legno">ferro legno</span><span class="caret"></span>
+          </div>
+          <p class="mock-count"><strong class="count" data-to="16">16</strong> voci trovate</p>
+          <ul class="mock-rows">
+            <li class="row shown"><b>Bùlbera</b><span>…strumento di <mark>legno</mark> con manico di <mark>ferro</mark>…</span></li>
+            <li class="row shown"><i></i><i class="short"></i></li>
+            <li class="row shown"><i></i><i class="short"></i></li>
+            <li class="row shown"><i></i><i class="short"></i></li>
+          </ul>
+        </div>
+      </figure>
+    </section>
+
+    <section class="chapter" id="contenute">
+      <span class="numeral" aria-hidden="true" data-speed="0.5">02</span>
+      <div class="text">
+        <p class="step">Passo 2</p>
+        <h2>Parole contenute</h2>
+        <p>L'interruttore <strong>Parole contenute</strong> decide come vengono cercate le parole:</p>
+        <ul>
+          <li><strong>acceso</strong>: trova anche le parole che le contengono (<kbd>ferro</kbd> trova anche «ferroso»);</li>
+          <li><strong>spento</strong>: trova solo la parola esatta.</li>
+        </ul>
+        <p>Accenti e maiuscole non contano: <kbd>abacch</kbd> trova «Abàcch».</p>
+      </div>
+      <figure class="demo" aria-hidden="true" data-demo="toggle">
+        <div class="window on">
+          <div class="mock-switch-row"><span class="mini-switch"><span></span></span>Parole contenute</div>
+          <div class="words">
+            <span class="word exact">ferro</span>
+            <span class="word contained">ferroso</span>
+            <span class="word contained">ferrovia</span>
+            <span class="word contained">inferro</span>
+          </div>
+          <p class="fold"><kbd>abacch</kbd><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span>Abàcch</span></p>
+        </div>
+      </figure>
+    </section>
+
+    <section class="chapter" id="risultati">
+      <span class="numeral" aria-hidden="true" data-speed="0.5">03</span>
+      <div class="text">
+        <p class="step">Passo 3</p>
+        <h2>Lemmi e definizioni</h2>
+        <p>A sinistra i risultati sono divisi in due: <strong>Lemmi</strong> (la parola è nella voce) e <strong>Definizioni</strong> (la parola è nella spiegazione). Il numero accanto dice quante voci sono state trovate.</p>
+        <p>Clicca una voce per leggerla a destra: le parole cercate sono evidenziate.</p>
+      </div>
+      <figure class="demo" aria-hidden="true" data-demo="toggle">
+        <div class="window on">
+          <div class="mock-tabs">
+            <span class="indicator"></span>
+            <span class="tab lemmi">Lemmi <small>3</small></span>
+            <span class="tab definizioni">Definizioni <small>16</small></span>
+          </div>
+          <div class="split">
+            <ul class="mini-list">
+              <li class="selected"><i></i></li>
+              <li><i></i></li>
+              <li><i></i></li>
+            </ul>
+            <div class="mini-reading">
+              <b>Bùlbera</b>
+              <p>Strumento di <mark>legno</mark> con manico di <mark>ferro</mark>, chiuso da una parte…</p>
+            </div>
+          </div>
+        </div>
+      </figure>
+    </section>
+
+    <section class="chapter" id="occorrenze">
+      <span class="numeral" aria-hidden="true" data-speed="0.5">04</span>
+      <div class="text">
+        <p class="step">Passo 4</p>
+        <h2>Occorrenze</h2>
+        <p>Con <strong>Successiva</strong> o il tasto <kbd>F3</kbd> la parola cercata successiva viene evidenziata in rosso pieno. Finite le parole di una voce, si passa da sola alla voce seguente.</p>
+      </div>
+      <figure class="demo" aria-hidden="true" data-demo="occurrences">
+        <div class="window">
+          <div class="occ-bar">
+            <span class="occ-label">Occorrenza <b class="occ-index">4</b> di 4</span>
+            <kbd class="press">F3</kbd>
+          </div>
+          <p class="occ-text">Il <mark>ferro</mark> si batte sull'incudine; col <mark>ferro</mark> caldo si fa il manico, poi il <mark>ferro</mark> si tempra e si lima finché il <mark class="current">ferro</mark> non brilla.</p>
+        </div>
+      </figure>
+    </section>
+
+    <section class="chapter" id="sfogliare">
+      <span class="numeral" aria-hidden="true" data-speed="0.5">05</span>
+      <div class="text">
+        <p class="step">Passo 5</p>
+        <h2>Sfogliare per lettera</h2>
+        <p>Dalla pagina iniziale scegli una lettera, oppure <kbd>*</kbd> per vedere tutti i lemmi. A sinistra resta la griglia delle lettere con il numero di lemmi di ciascuna.</p>
+        <p>Per tornare alla pagina iniziale clicca <strong>Cherubini</strong> in alto a sinistra.</p>
+      </div>
+      <figure class="demo" aria-hidden="true" data-demo="tiles">
+        <div class="window">
+          <div class="tiles">
+            <span class="tile">*</span><span class="tile">A</span><span class="tile">B</span><span class="tile">C</span>
+            <span class="tile">D</span><span class="tile">E</span><span class="tile">F</span><span class="tile selected">G</span>
+            <span class="tile">I</span><span class="tile">L</span><span class="tile">M</span><span class="tile">P</span>
+          </div>
+          <p class="tiles-caption"><b>G</b> · 224 lemmi</p>
+        </div>
+      </figure>
+    </section>
+
+    <section class="chapter" id="navigare">
+      <span class="numeral" aria-hidden="true" data-speed="0.5">06</span>
+      <div class="text">
+        <p class="step">Passo 6</p>
+        <h2>Spostarsi tra le voci</h2>
+        <p>Sopra la voce ci sono i pulsanti per andare alla prima, alla precedente, alla successiva e all'ultima. Nella casella del numero puoi scrivere una posizione e premere <kbd>Invio</kbd> per saltarci.</p>
+        <p>Nell'elenco puoi usare anche le frecce della tastiera.</p>
+      </div>
+      <figure class="demo" aria-hidden="true" data-demo="position">
+        <div class="window">
+          <div class="nav-bar">
+            <span class="nav-button"><svg viewBox="0 0 24 24"><path d="M18 6 9 12l9 6zM6 6v12"/></svg></span>
+            <span class="nav-button"><svg viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></svg></span>
+            <span class="nav-position">Lemma <b class="position" data-to="112">112</b> di 224</span>
+            <span class="nav-button"><svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></span>
+            <span class="nav-button"><svg viewBox="0 0 24 24"><path d="m6 6 9 6-9 6zM18 6v12"/></svg></span>
+          </div>
+          <div class="nav-track"><span class="nav-fill"></span></div>
+          <div class="arrows"><kbd>↑</kbd><kbd>↓</kbd></div>
+        </div>
+      </figure>
+    </section>
+
+    <section class="chapter" id="recenti">
+      <span class="numeral" aria-hidden="true" data-speed="0.5">07</span>
+      <div class="text">
+        <p class="step">Passo 7</p>
+        <h2>Ricerche recenti</h2>
+        <p>Premendo <kbd>Invio</kbd>, o aprendo un risultato, la ricerca viene ricordata. Le ultime ricerche compaiono nella pagina iniziale: un clic e la ripeti.</p>
+      </div>
+      <figure class="demo" aria-hidden="true" data-demo="chips">
+        <div class="window">
+          <p class="chips-label">Recenti</p>
+          <div class="chips">
+            <span class="chip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>ferro legno</span>
+            <span class="chip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>telaio</span>
+            <span class="chip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>abacch</span>
+            <span class="chip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>ruota</span>
+          </div>
+        </div>
+      </figure>
+    </section>
+
+    <section class="chapter" id="stampa">
+      <span class="numeral" aria-hidden="true" data-speed="0.5">08</span>
+      <div class="text">
+        <p class="step">Passo 8</p>
+        <h2>Stampare</h2>
+        <p>Spunta <strong>Da stampare</strong> sulle voci che ti interessano, nell'elenco o sotto la voce aperta. Il pulsante <strong>Stampa</strong> in alto mostra quante ne hai scelte.</p>
+        <p>Nel pannello Stampa puoi togliere voci, sceglierle tutte o svuotare la selezione. Premendo Stampa si apre la finestra di stampa, dove scegli la stampante.</p>
+      </div>
+      <figure class="demo" aria-hidden="true" data-demo="print">
+        <div class="window">
+          <ul class="print-rows">
+            <li class="checked"><span class="box"></span>Bùlbera</li>
+            <li class="checked"><span class="box"></span>Gabà o Gabbà</li>
+            <li class="checked"><span class="box"></span>Boeùggia</li>
+          </ul>
+          <span class="print-button">
+            <svg viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M8 14h8v7H8z"/></svg>
+            Stampa <b class="print-count">3</b>
+          </span>
+        </div>
+      </figure>
+    </section>
+
+    <section class="chapter" id="abbreviazioni">
+      <span class="numeral" aria-hidden="true" data-speed="0.5">09</span>
+      <div class="text">
+        <p class="step">Passo 9</p>
+        <h2>Abbreviazioni</h2>
+        <p>Il pannello <strong>Abbreviazioni</strong> raccoglierà le abbreviazioni usate dal Cherubini, divise in Autori, Abbreviazioni, Scrittori e Contrazioni. L'elenco sarà aggiunto in una prossima versione.</p>
+      </div>
+      <figure class="demo" aria-hidden="true" data-demo="abbreviations">
+        <div class="window">
+          <div class="segments"><span class="selected">Autori</span><span>Abbrev.</span><span>Scritt.</span><span>Contr.</span></div>
+          <div class="soon">
+            <span class="soon-icon"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></span>
+            <b>Elenco non ancora disponibile</b>
+          </div>
+        </div>
+      </figure>
+    </section>
+
+    <section class="keys" id="tasti">
+      <div class="keys-viewport">
+        <div class="keys-track">
+          <div class="key-card intro">
+            <p class="step">Passo 10</p>
+            <h2>Tasti rapidi</h2>
+            <p>Tutto si può fare anche dalla tastiera.</p>
+          </div>
+          <div class="key-card"><span class="keycaps"><kbd>Invio</kbd></span><p>ricorda la ricerca</p></div>
+          <div class="key-card"><span class="keycaps"><kbd>Esc</kbd></span><p>azzera la ricerca</p></div>
+          <div class="key-card"><span class="keycaps"><kbd>↓</kbd></span><p>dal campo di ricerca passa all'elenco</p></div>
+          <div class="key-card"><span class="keycaps"><kbd>↑</kbd><kbd>↓</kbd></span><p>voce precedente o successiva nell'elenco</p></div>
+          <div class="key-card"><span class="keycaps"><kbd>F3</kbd></span><p>occorrenza successiva</p></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="credits">
+    <img src="icon.png" alt="" width="32" height="32">
+    <p>A cura di Stefano Pilato e Khova Krishna Pilato</p>
+    <a href="#" class="back-top">Torna su</a>
+  </footer>
+
+  <script src="gsap.min.js"></script>
+  <script src="ScrollTrigger.min.js"></script>
+  <script src="help.js"></script>
+</body>
+</html>

@@ -1,0 +1,397 @@
+.root {
+    -color-accent-fg: #0b5d12;
+    -color-accent-emphasis: #0f7b0f;
+    -color-accent-muted: #a9d3a9;
+    -color-accent-subtle: #e8f3e8;
+    -ground: #f4f5f4;
+    -surface: #ffffff;
+    -line: #e2e5e2;
+    -line-soft: #eceeec;
+    -ink: #17191a;
+    -ink-soft: #555b57;
+    -ink-faint: #6b716d;
+    -found: #b3261e;
+
+    -fx-font-family: "IBM Plex Sans";
+    -fx-font-size: 14px;
+}
+
+.app {
+    -fx-background-color: -ground;
+}
+
+.secondary {
+    -fx-text-fill: -ink-soft;
+}
+
+.small {
+    -fx-font-size: 12px;
+}
+
+.lente {
+    -fx-padding: 24;
+}
+
+.lente-title {
+    -fx-font-size: 28px;
+    -fx-font-family: "IBM Plex Sans SmBld";
+    -fx-text-fill: -ink;
+}
+
+.lente-subtitle {
+    -fx-font-size: 15px;
+    -fx-text-fill: -ink-soft;
+}
+
+.big-search {
+    -fx-pref-height: 58px;
+    -fx-font-size: 18px;
+    -fx-background-color: -surface;
+    -fx-background-radius: 16;
+    -fx-border-color: #dfe3df;
+    -fx-border-radius: 16;
+    -fx-padding: 0 12 0 18;
+    -fx-effect: dropshadow(gaussian, rgba(16, 30, 16, 0.09), 24, 0, 0, 8);
+}
+
+.big-search:focused {
+    -fx-border-color: -color-accent-emphasis;
+}
+
+.big-search .toggle-switch {
+    -fx-font-size: 14px;
+}
+
+.bar-search {
+    -fx-pref-height: 40px;
+    -fx-font-size: 15px;
+    -fx-background-color: #f1f3f1;
+    -fx-background-radius: 10;
+    -fx-border-color: transparent;
+    -fx-border-radius: 10;
+}
+
+.bar-search:focused {
+    -fx-background-color: -surface;
+    -fx-border-color: -color-accent-emphasis;
+}
+
+.big-search .ikonli-font-icon,
+.bar-search .ikonli-font-icon {
+    -fx-icon-color: -ink-soft;
+    -fx-icon-size: 18;
+}
+
+.clear {
+    -fx-padding: 4;
+}
+
+.hint {
+    -fx-font-size: 13px;
+    -fx-text-fill: -ink-faint;
+}
+
+.chip {
+    -fx-background-color: -surface;
+    -fx-background-radius: 999;
+    -fx-border-color: #dfe3df;
+    -fx-border-radius: 999;
+    -fx-padding: 6 12;
+    -fx-cursor: hand;
+}
+
+.chip:hover {
+    -fx-border-color: -color-accent-emphasis;
+    -fx-text-fill: -color-accent-fg;
+}
+
+.chip .ikonli-font-icon {
+    -fx-icon-size: 14;
+    -fx-icon-color: -ink-soft;
+}
+
+.pill {
+    -fx-min-width: 38;
+    -fx-min-height: 38;
+    -fx-pref-width: 38;
+    -fx-pref-height: 38;
+    -fx-padding: 0;
+    -fx-background-color: -surface;
+    -fx-background-radius: 10;
+    -fx-border-color: -line;
+    -fx-border-radius: 10;
+    -fx-font-size: 15px;
+    -fx-font-family: "IBM Plex Sans Medm";
+    -fx-cursor: hand;
+}
+
+.pill:hover {
+    -fx-border-color: -color-accent-emphasis;
+    -fx-text-fill: -color-accent-fg;
+}
+
+.pill:disabled {
+    -fx-opacity: 0.45;
+}
+
+.badge {
+    -fx-background-color: -color-accent-emphasis;
+    -fx-background-radius: 10;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-family: "IBM Plex Sans SmBld";
+    -fx-padding: 1 7;
+}
+
+.topbar {
+    -fx-background-color: -surface;
+    -fx-border-color: transparent transparent -line-soft transparent;
+    -fx-padding: 10 16;
+}
+
+.home {
+    -fx-font-size: 15px;
+    -fx-font-family: "IBM Plex Sans SmBld";
+    -fx-graphic-text-gap: 10;
+}
+
+.warning {
+    -fx-background-color: #fdf1ef;
+    -fx-text-fill: #9c2316;
+    -fx-padding: 8 16;
+}
+
+.card {
+    -fx-background-color: -surface;
+    -fx-background-radius: 14;
+    -fx-border-color: -line;
+    -fx-border-radius: 14;
+}
+
+.letters-card {
+    -fx-padding: 14;
+}
+
+.card-label {
+    -fx-font-size: 13px;
+    -fx-font-family: "IBM Plex Sans SmBld";
+    -fx-text-fill: -ink-soft;
+}
+
+.tile {
+    -fx-min-height: 48;
+    -fx-padding: 0;
+    -fx-alignment: center;
+    -fx-background-color: -surface;
+    -fx-background-radius: 10;
+    -fx-border-color: -line;
+    -fx-border-radius: 10;
+    -fx-cursor: hand;
+}
+
+
+.tile-letter {
+    -fx-font-size: 15px;
+    -fx-font-family: "IBM Plex Sans SmBld";
+}
+
+.tile-count {
+    -fx-font-size: 10px;
+    -fx-text-fill: -ink-faint;
+}
+
+.tile:hover {
+    -fx-border-color: -color-accent-emphasis;
+}
+
+.tile:selected {
+    -fx-background-color: -color-accent-emphasis;
+    -fx-border-color: -color-accent-emphasis;
+}
+
+.tile:selected .tile-letter,
+.tile:selected .tile-count {
+    -fx-text-fill: white;
+}
+
+.tile:disabled {
+    -fx-opacity: 0.45;
+}
+
+.list-header {
+    -fx-padding: 14 16 10 16;
+    -fx-border-color: transparent transparent -line-soft transparent;
+}
+
+.list-title {
+    -fx-font-size: 26px;
+    -fx-font-family: "IBM Plex Sans SmBld";
+}
+
+.lemma-list {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-border-width: 0;
+    -fx-padding: 6;
+}
+
+.lemma-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-background-radius: 10;
+    -fx-padding: 9 10;
+}
+
+.lemma-list .list-cell:filled:hover {
+    -fx-background-color: #f6f8f6;
+}
+
+.lemma-list .list-cell:filled:selected {
+    -fx-background-color: -color-accent-subtle;
+}
+
+.list-lemma > Text {
+    -fx-font-size: 15px;
+    -fx-font-family: "IBM Plex Sans SmBld";
+    -fx-fill: -ink;
+}
+
+.lemma-list .list-cell:filled:selected .list-lemma > Text {
+    -fx-fill: -color-accent-fg;
+}
+
+.list-snippet > Text {
+    -fx-font-size: 13px;
+    -fx-fill: -ink-soft;
+}
+
+.list-lemma > .match,
+.list-snippet > .match,
+.lemma-title > .match {
+    -fx-fill: -found;
+    -fx-font-family: "IBM Plex Sans SmBld";
+}
+
+.reading-toolbar {
+    -fx-padding: 8 12;
+    -fx-border-color: transparent transparent -line-soft transparent;
+}
+
+.position {
+    -fx-pref-column-count: 3;
+    -fx-alignment: center;
+    -fx-pref-height: 30px;
+}
+
+.reading {
+    -fx-padding: 24 32 12 32;
+}
+
+.lemma-title > Text {
+    -fx-font-size: 32px;
+    -fx-font-family: "IBM Plex Sans SmBld";
+    -fx-fill: -ink;
+}
+
+.definition {
+    -fx-background-color: transparent;
+}
+
+.definition .text {
+    -fx-font-family: "IBM Plex Sans";
+    -fx-font-size: 17px;
+    -fx-fill: -ink;
+}
+
+.definition .paragraph-box {
+    -fx-line-spacing: 6px;
+}
+
+.definition .hit {
+    -rtfx-background-color: rgba(196, 43, 28, 0.14);
+    -fx-fill: #a3241a;
+}
+
+.definition .hit-current {
+    -rtfx-background-color: #c42b1c;
+    -fx-fill: white;
+}
+
+.reading-footer {
+    -fx-padding: 10 16;
+    -fx-border-color: -line-soft transparent transparent transparent;
+}
+
+.footer {
+    -fx-padding: 0 20 10 20;
+}
+
+.footer .label {
+    -fx-font-size: 12px;
+    -fx-text-fill: -ink-soft;
+}
+
+.panel {
+    -fx-background-color: -surface;
+    -fx-padding: 18 20 20 22;
+    -fx-spacing: 14;
+    -fx-effect: dropshadow(gaussian, rgba(16, 30, 16, 0.14), 32, 0, -10, 0);
+}
+
+.panel-title {
+    -fx-font-size: 18px;
+    -fx-font-family: "IBM Plex Sans SmBld";
+}
+
+.empty-icon {
+    -fx-background-color: #f1f3f1;
+    -fx-background-radius: 14;
+    -fx-min-width: 52;
+    -fx-min-height: 52;
+    -fx-max-width: 52;
+    -fx-max-height: 52;
+}
+
+.empty-icon .ikonli-font-icon {
+    -fx-icon-size: 22;
+    -fx-icon-color: -ink-soft;
+}
+
+.empty-state {
+    -fx-padding: 24 18;
+}
+
+.empty-title {
+    -fx-font-size: 15px;
+    -fx-font-family: "IBM Plex Sans SmBld";
+}
+
+.print-list {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+}
+
+.print-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: -line-soft;
+    -fx-border-radius: 10;
+    -fx-padding: 8 10;
+}
+
+.print-list .list-cell:empty {
+    -fx-border-color: transparent;
+}
+
+.print-lemma {
+    -fx-font-family: "IBM Plex Sans SmBld";
+}
+
+.print-now {
+    -fx-pref-height: 42px;
+}
+
+.toast {
+    -fx-background-color: -ink;
+    -fx-background-radius: 12;
+    -fx-text-fill: white;
+    -fx-padding: 12 18;
+}

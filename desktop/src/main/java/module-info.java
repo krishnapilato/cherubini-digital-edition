@@ -4,10 +4,12 @@ module com.cherubinivocabulary.cherubinivocabulary {
     requires java.sql;
     requires java.prefs;
     requires java.logging;
-    requires org.xerial.sqlitejdbc;
+    requires atlantafx.base;
     requires org.kordamp.ikonli.javafx;
-    requires org.kordamp.ikonli.fontawesome6;
+    requires org.kordamp.ikonli.feather;
+    requires org.fxmisc.richtext;
+    requires org.fxmisc.flowless;
+    requires org.xerial.sqlitejdbc;
 
-    opens com.cherubinivocabulary.cherubinivocabulary to javafx.graphics;
-    opens com.cherubinivocabulary.cherubinivocabulary.ui to javafx.fxml;
+    opens com.cherubinivocabulary.cherubinivocabulary to javafx.fxml, javafx.graphics;
 }

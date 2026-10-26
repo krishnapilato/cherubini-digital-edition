@@ -1,6 +1,5 @@
 package com.cherubinivocabulary.cherubinivocabulary;
 
-import module java.base;
 import module java.logging;
 
 import javafx.application.Application;
@@ -10,7 +9,7 @@ public class Launcher {
 
     static void main(String[] args) {
         hideWarningAboutRunningFromASingleJar();
-        Application.launch(CherubiniApplication.class, args);
+        Application.launch(CherubiniApp.class, args);
     }
 
     private static void hideWarningAboutRunningFromASingleJar() {
