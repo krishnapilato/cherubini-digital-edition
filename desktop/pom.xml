@@ -116,7 +116,7 @@
                                 <argument>--enable-native-access=ALL-UNNAMED</argument>
                                 <argument>-classpath</argument>
                                 <classpath/>
-                                <argument>${project.basedir}/build/BuildDatabase.java</argument>
+                                <argument>${project.basedir}/tools/BuildDatabase.java</argument>
                                 <argument>${project.basedir}/../data/cherubini.json</argument>
                                 <argument>${project.build.directory}/generated-resources/database/cherubini.db</argument>
                             </arguments>

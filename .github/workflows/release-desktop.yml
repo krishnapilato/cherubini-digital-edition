@@ -24,6 +24,7 @@ jobs:
             platform: macos
             arch: intel
             javafx: mac
+            jdk: zulu
           - os: ubuntu-latest
             platform: linux
     runs-on: ${{ matrix.os }}
@@ -38,7 +39,7 @@ jobs:
 
       - uses: actions/setup-java@v6
         with:
-          distribution: temurin
+          distribution: ${{ matrix.jdk || 'temurin' }}
           java-version: "27"
           cache: maven
           cache-dependency-path: desktop/pom.xml
