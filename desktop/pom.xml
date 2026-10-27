@@ -14,6 +14,14 @@
         <maven.compiler.release>27</maven.compiler.release>
         <javafx.version>27.0.1</javafx.version>
         <javafx.mac.classifier>mac-aarch64</javafx.mac.classifier>
+        <!-- By default the jar carries the native libraries of every system and runs anywhere.
+             A release package passes -Dplatform=... (see the profiles) to keep only its own. -->
+        <natives.skip.windows>false</natives.skip.windows>
+        <natives.skip.mac>false</natives.skip.mac>
+        <natives.skip.linux>false</natives.skip.linux>
+        <sqlite.drop.first>none</sqlite.drop.first>
+        <sqlite.drop.second>none</sqlite.drop.second>
+        <sqlite.drop.third>none</sqlite.drop.third>
         <pmd.version>7.28.0</pmd.version>
         <main.class>com.cherubinivocabulary.Launcher</main.class>
     </properties>
@@ -240,12 +248,13 @@
                 <version>3.11.0</version>
                 <executions>
                     <execution>
-                        <id>javafx-natives-for-every-system</id>
+                        <id>javafx-natives-windows</id>
                         <phase>prepare-package</phase>
                         <goals>
                             <goal>unpack</goal>
                         </goals>
                         <configuration>
+                            <skip>${natives.skip.windows}</skip>
                             <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                             <artifactItems>
                                 <artifactItem>
@@ -255,6 +264,19 @@
                                     <classifier>win</classifier>
                                     <includes>*.dll</includes>
                                 </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>javafx-natives-mac</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${natives.skip.mac}</skip>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                            <artifactItems>
                                 <artifactItem>
                                     <groupId>org.openjfx</groupId>
                                     <artifactId>javafx-graphics</artifactId>
@@ -262,6 +284,19 @@
                                     <classifier>${javafx.mac.classifier}</classifier>
                                     <includes>*.dylib</includes>
                                 </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>javafx-natives-linux</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${natives.skip.linux}</skip>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                            <artifactItems>
                                 <artifactItem>
                                     <groupId>org.openjfx</groupId>
                                     <artifactId>javafx-graphics</artifactId>
@@ -326,6 +361,9 @@
                                         <exclude>org/sqlite/native/Linux/x86/**</exclude>
                                         <exclude>org/sqlite/native/Windows/armv7/**</exclude>
                                         <exclude>org/sqlite/native/Windows/x86/**</exclude>
+                                        <exclude>org/sqlite/native/${sqlite.drop.first}/**</exclude>
+                                        <exclude>org/sqlite/native/${sqlite.drop.second}/**</exclude>
+                                        <exclude>org/sqlite/native/${sqlite.drop.third}/**</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
@@ -346,4 +384,74 @@
             </plugin>
         </plugins>
     </build>
+
+    <!-- One profile per release package: only the native libraries of that system and processor. -->
+    <profiles>
+        <profile>
+            <id>windows</id>
+            <activation>
+                <property>
+                    <name>platform</name>
+                    <value>windows</value>
+                </property>
+            </activation>
+            <properties>
+                <natives.skip.mac>true</natives.skip.mac>
+                <natives.skip.linux>true</natives.skip.linux>
+                <sqlite.drop.first>Mac</sqlite.drop.first>
+                <sqlite.drop.second>Linux</sqlite.drop.second>
+                <sqlite.drop.third>Windows/aarch64</sqlite.drop.third>
+            </properties>
+        </profile>
+        <profile>
+            <id>mac-aarch64</id>
+            <activation>
+                <property>
+                    <name>platform</name>
+                    <value>mac-aarch64</value>
+                </property>
+            </activation>
+            <properties>
+                <javafx.mac.classifier>mac-aarch64</javafx.mac.classifier>
+                <natives.skip.windows>true</natives.skip.windows>
+                <natives.skip.linux>true</natives.skip.linux>
+                <sqlite.drop.first>Windows</sqlite.drop.first>
+                <sqlite.drop.second>Linux</sqlite.drop.second>
+                <sqlite.drop.third>Mac/x86_64</sqlite.drop.third>
+            </properties>
+        </profile>
+        <profile>
+            <id>mac-x64</id>
+            <activation>
+                <property>
+                    <name>platform</name>
+                    <value>mac-x64</value>
+                </property>
+            </activation>
+            <properties>
+                <javafx.mac.classifier>mac</javafx.mac.classifier>
+                <natives.skip.windows>true</natives.skip.windows>
+                <natives.skip.linux>true</natives.skip.linux>
+                <sqlite.drop.first>Windows</sqlite.drop.first>
+                <sqlite.drop.second>Linux</sqlite.drop.second>
+                <sqlite.drop.third>Mac/aarch64</sqlite.drop.third>
+            </properties>
+        </profile>
+        <profile>
+            <id>linux</id>
+            <activation>
+                <property>
+                    <name>platform</name>
+                    <value>linux</value>
+                </property>
+            </activation>
+            <properties>
+                <natives.skip.windows>true</natives.skip.windows>
+                <natives.skip.mac>true</natives.skip.mac>
+                <sqlite.drop.first>Windows</sqlite.drop.first>
+                <sqlite.drop.second>Mac</sqlite.drop.second>
+                <sqlite.drop.third>Linux/aarch64</sqlite.drop.third>
+            </properties>
+        </profile>
+    </profiles>
 </project>

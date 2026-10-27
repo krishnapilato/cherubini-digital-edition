@@ -55,7 +55,7 @@ cd desktop
 mvn javafx:run
 ```
 
-`mvn package` crea `target/cherubini.jar`, un unico jar con dentro JavaFX per Windows, macOS e Linux. Durante la build Maven genera il database SQLite partendo da `data/cherubini.json` (`desktop/tools/BuildDatabase.java`), quindi il file `.db` non sta nel repository. Anche la guida viene presa da `guide/`: il pulsante `?` la estrae in una cartella temporanea e la apre nel browser.
+`mvn package` crea `target/cherubini.jar`, un unico jar con dentro JavaFX per Windows, macOS e Linux. I pacchetti delle release invece contengono solo le librerie native del proprio sistema (`mvn package -Dplatform=windows`, `mac-aarch64`, `mac-x64` o `linux`), così pesano circa 5 MB in meno. Durante la build Maven genera il database SQLite partendo da `data/cherubini.json` (`desktop/tools/BuildDatabase.java`), quindi il file `.db` non sta nel repository. Anche la guida viene presa da `guide/`: il pulsante `?` la estrae in una cartella temporanea e la apre nel browser.
 
 Il codice viene controllato a ogni compilazione: i warning di `javac` (`-Xlint:all`) sono errori e PMD, con le regole di `desktop/pmd-ruleset.xml`, ferma la build se trova import, campi, variabili o metodi inutilizzati, codice troppo complesso o errori tipici. Vale per `mvn compile`, `mvn javafx:run`, la configurazione di IntelliJ e le build delle release. `mvn test` esegue i test JUnit (vedi [Test e controlli](#test-e-controlli)).
 
