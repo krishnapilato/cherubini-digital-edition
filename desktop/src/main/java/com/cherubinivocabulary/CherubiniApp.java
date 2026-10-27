@@ -4,9 +4,14 @@ import module java.base;
 import module javafx.fxml;
 import module javafx.graphics;
 import atlantafx.base.theme.PrimerLight;
+import javafx.scene.control.Labeled;
 
 public class CherubiniApp extends Application {
+    /** Opens the window, checks that it shows the vocabulary and quits: see Launcher. */
+    static final String SMOKE_TEST = "--smoke-test";
+
     private static final List<String> FONT_WEIGHTS = List.of("Regular", "Medium", "SemiBold");
+    private static final AtomicBoolean SMOKE_TEST_PASSED = new AtomicBoolean();
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -16,6 +21,17 @@ public class CherubiniApp extends Application {
         stage.setMinHeight(560);
         stage.setScene(scene(new History(), getHostServices()));
         stage.show();
+        if (getParameters().getRaw().contains(SMOKE_TEST)) Platform.runLater(() -> finishTheSmokeTest(stage));
+    }
+
+    static boolean passedTheSmokeTest() {
+        return SMOKE_TEST_PASSED.get();
+    }
+
+    private static void finishTheSmokeTest(Stage stage) {
+        String status = stage.getScene().lookup("#statusLabel") instanceof Labeled label ? label.getText() : "";
+        SMOKE_TEST_PASSED.set(stage.isShowing() && status.endsWith(" voci · sola consultazione") && !status.startsWith("0 "));
+        Platform.exit();
     }
 
     /** The whole interface, shared with the interface tests. */

@@ -115,7 +115,7 @@ I test dell’interfaccia usano l’app vera come farebbe una persona: cercano s
   - `Cherubini-macos-intel.zip` per Mac con processore Intel
   - `Cherubini-linux-x86_64.AppImage` per Linux
 
-  I pacchetti non sono firmati; le note di ogni release spiegano come superare l'avviso al primo avvio. Ogni release pubblica anche `SHA256SUMS.txt` con le impronte SHA-256 dei pacchetti, per verificare che il file scaricato sia integro.
+  I pacchetti non sono firmati; le note di ogni release spiegano come superare l'avviso al primo avvio. Prima di essere pubblicato, ogni pacchetto viene avviato sul proprio sistema con `--smoke-test`: l’app apre la finestra sulla piattaforma headless di JavaFX, controlla che mostri il vocabolario e si chiude, e se qualcosa non va la release si ferma. Ogni release pubblica anche `SHA256SUMS.txt` con le impronte SHA-256 dei pacchetti, per verificare che il file scaricato sia integro.
 
 ## Autori
 

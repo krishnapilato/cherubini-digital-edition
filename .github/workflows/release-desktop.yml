@@ -93,6 +93,20 @@ jobs:
             --java-options "--enable-native-access=ALL-UNNAMED" \
             --dest target/dist
 
+      # Starts the portable app exactly as it is shipped: with --smoke-test it opens the window
+      # on the JavaFX headless platform, checks that it shows the vocabulary and quits; any
+      # failure, a missing native library included, stops the release.
+      - name: Startup check
+        timeout-minutes: 3
+        run: |
+          case "${{ matrix.platform }}" in
+            windows) app=target/dist/Cherubini/Cherubini.exe ;;
+            macos) app=target/dist/Cherubini.app/Contents/MacOS/Cherubini ;;
+            linux) app=target/dist/Cherubini/bin/Cherubini ;;
+          esac
+          "$app" --smoke-test
+          echo "Cherubini si avvia e mostra il vocabolario"
+
       - name: Windows zip
         if: matrix.platform == 'windows'
         shell: pwsh
