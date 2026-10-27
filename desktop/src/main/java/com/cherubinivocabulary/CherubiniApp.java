@@ -1,11 +1,9 @@
 package com.cherubinivocabulary;
 
 import module java.base;
-import module javafx.controls;
 import module javafx.fxml;
+import module javafx.graphics;
 import atlantafx.base.theme.PrimerLight;
-import javafx.application.Application;
-import javafx.scene.image.Image;
 
 public class CherubiniApp extends Application {
     private static final List<String> FONT_WEIGHTS = List.of("Regular", "Medium", "SemiBold");
@@ -13,7 +11,7 @@ public class CherubiniApp extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FONT_WEIGHTS.forEach(weight -> Font.loadFont(resource("fonts/IBMPlexSans-" + weight + ".ttf"), 14));
-        Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
+        setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
 
         var loader = new FXMLLoader(CherubiniApp.class.getResource("main-view.fxml"));
         loader.setControllerFactory(_ -> new MainController(Vocabulary.load(), new History(), getHostServices()));

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="Cherubini"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+    <description>
+        Static analysis for the desktop edition: any violation fails the build.
+        The excluded rules contradict the project's style (single-statement ifs without braces,
+        var, early returns, comments only where needed) or measure the size of the controller
+        instead of its quality, which CognitiveComplexity already covers as SonarLint does.
+    </description>
+
+    <!-- The test rules left out ask for a message on every assertion and a single assertion per test. -->
+    <rule ref="category/java/bestpractices.xml">
+        <exclude name="UnitTestAssertionsShouldIncludeMessage"/>
+        <exclude name="UnitTestContainsTooManyAsserts"/>
+        <exclude name="UnusedPrivateMethod"/>
+    </rule>
+    <!-- Methods annotated with @FXML are called from main-view.fxml. -->
+    <rule ref="category/java/bestpractices.xml/UnusedPrivateMethod">
+        <properties>
+            <property name="ignoredAnnotations" value="javafx.fxml.FXML"/>
+        </properties>
+    </rule>
+
+    <rule ref="category/java/codestyle.xml">
+        <exclude name="AtLeastOneConstructor"/>
+        <exclude name="CallSuperInConstructor"/>
+        <exclude name="CommentDefaultAccessModifier"/>
+        <exclude name="ControlStatementBraces"/>
+        <exclude name="LocalVariableCouldBeFinal"/>
+        <exclude name="LongVariable"/>
+        <exclude name="MethodArgumentCouldBeFinal"/>
+        <exclude name="OnlyOneReturn"/>
+        <exclude name="ShortClassName"/>
+        <exclude name="ShortMethodName"/>
+        <exclude name="ShortVariable"/>
+        <exclude name="UseExplicitTypes"/>
+        <exclude name="VariableDeclarationUsageDistance"/>
+    </rule>
+
+    <rule ref="category/java/design.xml">
+        <exclude name="CouplingBetweenObjects"/>
+        <exclude name="CyclomaticComplexity"/>
+        <exclude name="GodClass"/>
+        <exclude name="LawOfDemeter"/>
+        <exclude name="LoosePackageCoupling"/>
+        <exclude name="TooManyFields"/>
+        <exclude name="TooManyMethods"/>
+    </rule>
+
+    <rule ref="category/java/errorprone.xml"/>
+
+    <!-- The interface runs on the JavaFX thread only. -->
+    <rule ref="category/java/multithreading.xml">
+        <exclude name="UseConcurrentHashMap"/>
+    </rule>
+
+    <rule ref="category/java/performance.xml">
+        <exclude name="AvoidInstantiatingObjectsInLoops"/>
+    </rule>
+
+    <rule ref="category/java/security.xml"/>
+</ruleset>

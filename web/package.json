@@ -1,12 +1,13 @@
 {
   "name": "cherubini-digital-edition",
   "private": true,
-  "version": "1.1.0",
+  "version": "1.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "typecheck": "tsc -b",
     "lint": "eslint . --max-warnings 0",
+    "test": "vitest run",
     "build": "tsc -b && eslint . --max-warnings 0 && vite build",
     "preview": "vite preview"
   },
@@ -36,7 +37,8 @@
     "sass": "^1.106.1",
     "typescript": "~7.0.2",
     "typescript-eslint": "^8.72.1",
-    "vite": "^8.3.5"
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
   },
   "engines": {
     "node": ">=24"

@@ -4,11 +4,13 @@ import module java.base;
 
 final class Search {
     static final int MAX_WORDS = 4;
+    // Any Unicode space separates words, non-breaking ones included, as in the web edition.
+    private static final Pattern SPACES = Pattern.compile("(?U)\\s+");
 
     record Query(List<String> words, List<String> ignored, boolean exact) {
 
         static Query of(String text, boolean exact) {
-            List<String> all = Arrays.stream(text.strip().split("\\s+")).filter(word -> !word.isBlank()).toList();
+            List<String> all = Arrays.stream(SPACES.split(text)).filter(word -> !word.isEmpty()).toList();
             List<String> used = all.stream().limit(MAX_WORDS).toList();
             return new Query(used, all.subList(used.size(), all.size()), exact);
         }
@@ -44,7 +46,9 @@ final class Search {
         List<Range> found = new ArrayList<>();
         for (String word : words) {
             String term = fold(word);
-            for (int at = text.indexOf(term); at >= 0 && !term.isEmpty(); at = text.indexOf(term, at + 1)) {
+            // A word made only of accents folds to spaces and would match every space in the text.
+            if (term.isBlank()) continue;
+            for (int at = text.indexOf(term); at >= 0; at = text.indexOf(term, at + 1)) {
                 if (!exact || isWholeWord(text, at, at + term.length())) found.add(new Range(at, at + term.length()));
             }
         }

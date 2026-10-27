@@ -1,15 +1,14 @@
 import { CircleHelp, List, Printer } from "lucide-react";
 import { quantity } from "../vocabulary";
 
-const HELP_URL = `${import.meta.env.BASE_URL}guida/index.html`;
-
 interface Props {
   readonly printCount: number;
   readonly onAbbreviations: () => void;
   readonly onPrint: () => void;
+  readonly onHelp: () => void;
 }
 
-export function Actions({ printCount, onAbbreviations, onPrint }: Props) {
+export function Actions({ printCount, onAbbreviations, onPrint, onHelp }: Props) {
   return (
     <>
       <button type="button" className="button flat" aria-label="Abbreviazioni" onClick={onAbbreviations}>
@@ -25,9 +24,9 @@ export function Actions({ printCount, onAbbreviations, onPrint }: Props) {
           </span>
         )}
       </button>
-      <a className="icon-button" href={HELP_URL} target="_blank" rel="noopener" aria-label="Guida all'uso (si apre in una nuova scheda)" title="Guida all'uso">
+      <button type="button" className="icon-button" aria-label="Guida all'uso" title="Guida all'uso" onClick={onHelp}>
         <CircleHelp size={20} aria-hidden="true" />
-      </a>
+      </button>
     </>
   );
 }

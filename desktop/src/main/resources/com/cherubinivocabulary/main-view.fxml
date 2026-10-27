@@ -8,6 +8,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToggleGroup?>
@@ -26,6 +27,7 @@
 
 <StackPane xmlns:fx="http://javafx.com/fxml"
            fx:controller="com.cherubinivocabulary.MainController"
+           fx:id="root"
            styleClass="app">
 
     <fx:define>
@@ -93,7 +95,7 @@
                     <left><FontIcon iconLiteral="fth-search"/></left>
                     <right><ToggleSwitch fx:id="bigContained" text="Parole contenute" selected="true"/></right>
                 </CustomTextField>
-                <Label text="La ricerca parte mentre scrivi · Invio la salva tra le recenti" styleClass="hint"/>
+                <Label text="Invio salva la ricerca tra le recenti" styleClass="hint"/>
                 <FlowPane fx:id="recentPane" alignment="CENTER" hgap="8" vgap="8" maxWidth="620"/>
                 <VBox alignment="CENTER" spacing="10">
                     <Label text="Oppure sfoglia per lettera" styleClass="secondary"/>
@@ -157,10 +159,9 @@
                         <HBox spacing="12" VBox.vgrow="ALWAYS">
                             <padding><Insets top="12" right="16" bottom="12" left="16"/></padding>
 
-                            <VBox fx:id="lettersCard" styleClass="card, letters-card" spacing="12" minWidth="214" maxWidth="214">
-                                <Label text="Sfoglia per lettera" styleClass="card-label"/>
-                                <GridPane fx:id="letterGrid" hgap="6" vgap="6"/>
-                            </VBox>
+                            <ScrollPane fx:id="lettersCard" styleClass="card, letters-card" fitToWidth="true" hbarPolicy="NEVER" minWidth="136" maxWidth="136">
+                                <GridPane fx:id="letterGrid" hgap="6" vgap="6" accessibleText="Sfoglia per lettera"/>
+                            </ScrollPane>
 
                             <VBox styleClass="card" minWidth="300" prefWidth="330" maxWidth="340">
                                 <HBox fx:id="atlanteHeader" styleClass="list-header" alignment="BASELINE_LEFT">

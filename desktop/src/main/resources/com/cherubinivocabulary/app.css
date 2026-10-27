@@ -43,6 +43,11 @@
     -fx-text-fill: -ink-soft;
 }
 
+/* The theme hides the placeholder as soon as a field is focused; like on the web, it stays until you type. */
+.text-input:focused {
+    -fx-prompt-text-fill: -color-fg-subtle;
+}
+
 .big-search {
     -fx-pref-height: 58px;
     -fx-font-size: 18px;
@@ -197,13 +202,33 @@
 }
 
 .letters-card {
-    -fx-padding: 14;
+    -fx-padding: 10;
 }
 
-.card-label {
-    -fx-font-size: 13px;
-    -fx-font-family: "IBM Plex Sans SmBld";
-    -fx-text-fill: -ink-soft;
+.letters-card > .viewport {
+    -fx-background-color: transparent;
+}
+
+.letters-card > .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 6;
+    -fx-padding: 0 0 0 2;
+}
+
+.letters-card > .scroll-bar:vertical > .thumb {
+    -fx-background-color: -line;
+    -fx-background-radius: 3;
+}
+
+.letters-card > .scroll-bar > .increment-button,
+.letters-card > .scroll-bar > .decrement-button {
+    -fx-padding: 0;
+}
+
+.letters-card > .scroll-bar > .increment-button > .increment-arrow,
+.letters-card > .scroll-bar > .decrement-button > .decrement-arrow {
+    -fx-shape: null;
+    -fx-padding: 0;
 }
 
 .tile {

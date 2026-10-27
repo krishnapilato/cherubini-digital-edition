@@ -69,7 +69,7 @@ function toLemma({ id, lemma, def2 }: Row): Lemma {
   };
 }
 
-function build(text: string): Vocabulary {
+export function build(text: string): Vocabulary {
   const lemmas = (JSON.parse(text) as Row[]).map(toLemma);
   const byLetter = new Map<string, Lemma[]>([[ALL, lemmas]]);
   for (const lemma of lemmas) {

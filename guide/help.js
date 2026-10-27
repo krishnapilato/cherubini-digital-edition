@@ -1,31 +1,13 @@
 // Like the app, the guide disables the context menu and text selection (see help.css).
 document.addEventListener("contextmenu", (event) => event.preventDefault());
 
-const toc = document.querySelector(".toc");
-const links = [...toc.querySelectorAll("a")];
-const sections = links.map((link) => document.querySelector(link.getAttribute("href")));
 const clamp = (value) => Math.min(1, Math.max(0, value));
-
-const highlight = (id) => {
-  links.forEach((link) => {
-    const current = link.getAttribute("href") === `#${id}`;
-    link.classList.toggle("current", current);
-    if (current && getComputedStyle(toc).position === "sticky") toc.scrollTo({ left: link.offsetLeft - 16, behavior: "smooth" });
-  });
-};
 
 if (window.gsap && window.ScrollTrigger) {
   gsap.registerPlugin(ScrollTrigger);
   document.documentElement.classList.add("js");
 
   gsap.to(".progress span", { scaleX: 1, ease: "none", scrollTrigger: { start: 0, end: "max", scrub: 0.3 } });
-
-  ScrollTrigger.create({
-    trigger: ".hero",
-    start: "bottom 40%",
-    onToggle: (self) => toc.classList.toggle("visible", self.isActive || self.progress === 1),
-    end: "max",
-  });
 
   const scrubbed = (demo, apply, start = "top 85%", end = "center 45%") => {
     ScrollTrigger.create({
@@ -237,16 +219,5 @@ if (window.gsap && window.ScrollTrigger) {
     });
   });
 
-  sections.forEach((section) => {
-    ScrollTrigger.create({
-      trigger: section,
-      start: "top 50%",
-      end: "bottom 50%",
-      onToggle: (self) => self.isActive && highlight(section.id),
-    });
-  });
-
   addEventListener("load", () => ScrollTrigger.refresh());
-} else {
-  highlight(sections[0].id);
 }

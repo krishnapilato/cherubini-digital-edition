@@ -4,6 +4,7 @@ import { RotateCw } from "lucide-react";
 import { use, useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { Actions } from "./components/Actions";
 import { Lente } from "./components/Lente";
+import { GuideDialog } from "./components/Guide";
 import { LetterGrid } from "./components/LetterGrid";
 import { ListHeader } from "./components/ListHeader";
 import { AbbreviationsPanel, PrintPanel, PrintSheet } from "./components/Panels";
@@ -17,7 +18,7 @@ import { find } from "./search";
 import { useSession } from "./store";
 import { formatNumber, quantity, vocabularyReady, type Lemma, type Vocabulary } from "./vocabulary";
 
-type Panel = "abbreviazioni" | "stampa" | null;
+type Panel = "abbreviazioni" | "stampa" | "guida" | null;
 
 export default function App() {
   const vocabulary = use(vocabularyReady);
@@ -117,7 +118,7 @@ function Explorer({ vocabulary }: Readonly<{ vocabulary: Vocabulary }>) {
     setToast(`${quantity(items.length, "voce aggiunta", "voci aggiunte")} alla stampa`);
   };
 
-  const actions = <Actions printCount={toPrint.size} onAbbreviations={() => setPanel("abbreviazioni")} onPrint={() => setPanel("stampa")} />;
+  const actions = <Actions printCount={toPrint.size} onAbbreviations={() => setPanel("abbreviazioni")} onPrint={() => setPanel("stampa")} onHelp={() => setPanel("guida")} />;
 
   return (
     <div className="app" ref={root}>
@@ -183,6 +184,7 @@ function Explorer({ vocabulary }: Readonly<{ vocabulary: Vocabulary }>) {
         <span>A cura di Stefano Pilato e Khova Krishna Pilato</span>
       </footer>
       {panel === "abbreviazioni" && <AbbreviationsPanel onClosed={() => setPanel(null)} />}
+      {panel === "guida" && <GuideDialog onClosed={() => setPanel(null)} />}
       {panel === "stampa" && (
         <PrintPanel
           chosen={chosen}

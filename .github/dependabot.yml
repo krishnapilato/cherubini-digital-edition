@@ -1,0 +1,27 @@
+# Weekly version updates, grouped so that minor and patch releases arrive in a single
+# pull request per edition. Every pull request goes through the CI workflow.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /web
+    schedule:
+      interval: weekly
+    groups:
+      web:
+        update-types: [minor, patch]
+
+  - package-ecosystem: maven
+    directory: /desktop
+    schedule:
+      interval: weekly
+    groups:
+      desktop:
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]

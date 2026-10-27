@@ -1,7 +1,7 @@
 package com.cherubinivocabulary;
 
 import module java.base;
-import module javafx.controls;
+import module javafx.graphics;
 
 final class Printing {
     private static final Font HEADING = Font.font("IBM Plex Sans", 9);

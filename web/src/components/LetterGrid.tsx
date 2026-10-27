@@ -6,8 +6,7 @@ export function LetterGrid({ countOf }: Readonly<{ countOf: (letter: string) => 
   const openLetter = useSession((state) => state.openLetter);
 
   return (
-    <nav className="card letters-card" aria-label="Lettere">
-      <h2 className="card-label">Sfoglia per lettera</h2>
+    <nav className="card letters-card" aria-label="Sfoglia per lettera">
       <div className="tiles">
         {LETTERS.map((key) => {
           const count = countOf(key);

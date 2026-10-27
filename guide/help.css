@@ -291,55 +291,6 @@ a {
   50% { transform: translateY(4px); }
 }
 
-.toc {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  display: flex;
-  gap: 6px;
-  padding: 10px var(--gutter);
-  overflow-x: auto;
-  scrollbar-width: none;
-  border-bottom: 1px solid var(--line-soft);
-  background: rgba(244, 245, 244, 0.86);
-  backdrop-filter: blur(12px);
-}
-
-.toc::-webkit-scrollbar {
-  display: none;
-}
-
-.toc a {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  flex: none;
-  padding: 6px 12px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: var(--surface);
-  color: var(--ink-soft);
-  font-size: 14px;
-  text-decoration: none;
-  transition: background-color 0.25s, color 0.25s, border-color 0.25s;
-}
-
-.toc a span {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--ink-faint);
-}
-
-.toc a.current {
-  border-color: var(--accent);
-  background: var(--accent);
-  color: #fff;
-}
-
-.toc a.current span {
-  color: rgba(255, 255, 255, 0.8);
-}
-
 main {
   position: relative;
 }
@@ -354,7 +305,6 @@ main {
   align-content: center;
   gap: clamp(28px, 5vw, 72px);
   padding: clamp(64px, 12vh, 120px) var(--gutter);
-  scroll-margin-top: 56px;
 }
 
 .numeral {
@@ -939,7 +889,6 @@ main {
 }
 
 .keys {
-  scroll-margin-top: 56px;
   padding: clamp(64px, 12vh, 120px) 0;
 }
 
@@ -1029,67 +978,6 @@ main {
     left: var(--gutter);
   }
 
-  .toc {
-    position: fixed;
-    top: 50%;
-    right: 18px;
-    left: auto;
-    flex-direction: column;
-    gap: 4px;
-    padding: 8px;
-    overflow: visible;
-    border: 1px solid var(--line-soft);
-    border-radius: 18px;
-    transform: translateY(-50%);
-  }
-
-  .toc a {
-    position: relative;
-    justify-content: center;
-    width: 30px;
-    height: 30px;
-    padding: 0;
-    border-color: transparent;
-    background: transparent;
-  }
-
-  .toc a:hover,
-  .toc a:focus-visible {
-    background: var(--field);
-  }
-
-  .toc a .label {
-    position: absolute;
-    right: calc(100% + 10px);
-    padding: 5px 10px;
-    border-radius: 8px;
-    background: var(--ink);
-    color: #fff;
-    font-size: 13px;
-    white-space: nowrap;
-    opacity: 0;
-    transform: translateX(6px);
-    transition: opacity 0.2s, transform 0.2s;
-    pointer-events: none;
-  }
-
-  .toc a:hover .label,
-  .toc a:focus-visible .label {
-    opacity: 1;
-    transform: none;
-  }
-
-  .js .toc {
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.35s;
-  }
-
-  .js .toc.visible {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
   .keys-track {
     display: flex;
     gap: 20px;
@@ -1130,7 +1018,6 @@ main {
 
 @media print {
   .progress,
-  .toc,
   .floaters,
   .hero-letters,
   .numeral,

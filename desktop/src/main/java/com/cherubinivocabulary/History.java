@@ -8,7 +8,15 @@ public final class History {
     private static final String SEPARATOR = "\u001E";
     private static final int LIMIT = 6;
 
-    private final Preferences preferences = Preferences.userNodeForPackage(History.class);
+    private final Preferences preferences;
+
+    public History() {
+        this(Preferences.userNodeForPackage(History.class));
+    }
+
+    History(Preferences preferences) {
+        this.preferences = preferences;
+    }
 
     List<String> recent() {
         String saved = preferences.get(KEY, "");

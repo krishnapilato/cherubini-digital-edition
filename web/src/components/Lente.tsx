@@ -59,7 +59,7 @@ export function Lente({ onKeyDown, inputRef, countOf }: Props) {
         />
         <Switch checked={contained} onChange={setContained} label="Parole contenute" />
       </search>
-      <p className="lente-item hint">La ricerca parte mentre scrivi · Invio la salva tra le recenti</p>
+      <p className="lente-item hint">Invio salva la ricerca tra le recenti</p>
       {recent.length > 0 && (
         <div className="lente-item recent" role="group" aria-label="Ricerche recenti">
           <span aria-hidden="true">Recenti</span>

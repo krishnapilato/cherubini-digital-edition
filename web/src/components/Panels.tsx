@@ -1,7 +1,9 @@
 import { List, Printer, X } from "lucide-react";
 import { useState } from "react";
 import { quantity, type Lemma } from "../vocabulary";
-import { SidePanel } from "./SidePanel";
+import { Modal } from "./Modal";
+
+const HIDDEN = { x: 48, opacity: 0 };
 
 const CATEGORIES = [
   ["Autori", "Autori"],
@@ -13,7 +15,7 @@ const CATEGORIES = [
 export function AbbreviationsPanel({ onClosed }: Readonly<{ onClosed: () => void }>) {
   const [category, setCategory] = useState<string>(CATEGORIES[0][1]);
   return (
-    <SidePanel title="Abbreviazioni" subtitle="usate nel Vocabolario Cherubini" onClosed={onClosed}>
+    <Modal className="panel" hidden={HIDDEN} title="Abbreviazioni" subtitle="usate nel Vocabolario Cherubini" onClosed={onClosed}>
       {() => (
         <>
           <div className="segmented">
@@ -32,7 +34,7 @@ export function AbbreviationsPanel({ onClosed }: Readonly<{ onClosed: () => void
           </div>
         </>
       )}
-    </SidePanel>
+    </Modal>
   );
 }
 
@@ -49,7 +51,7 @@ interface PrintProps {
 export function PrintPanel({ chosen, canSelectFound, onSelectFound, onRemove, onClear, onPrint, onClosed }: PrintProps) {
   const count = chosen.length;
   return (
-    <SidePanel title="Stampa" subtitle={count === 0 ? "Nessuna voce scelta" : quantity(count, "voce scelta", "voci scelte")} onClosed={onClosed}>
+    <Modal className="panel" hidden={HIDDEN} title="Stampa" subtitle={count === 0 ? "Nessuna voce scelta" : quantity(count, "voce scelta", "voci scelte")} onClosed={onClosed}>
       {(close) => (
         <>
           {count === 0 ? (
@@ -94,7 +96,7 @@ export function PrintPanel({ chosen, canSelectFound, onSelectFound, onRemove, on
           </footer>
         </>
       )}
-    </SidePanel>
+    </Modal>
   );
 }
 

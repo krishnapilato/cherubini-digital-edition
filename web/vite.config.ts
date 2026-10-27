@@ -17,7 +17,9 @@ const CONTENT_TYPES: Readonly<Record<string, string>> = {
 };
 
 // The vocabulary JSON is fetched by the app; preloading it from the HTML downloads it
-// in parallel with the JavaScript instead of after it.
+// in parallel with the JavaScript instead of after it. After a reload the app reads it
+// from sessionStorage (see vocabulary.ts), and an unused preload is a console warning,
+// so the link is only added when that copy is missing.
 function preloadVocabulary(): Plugin {
   return {
     name: "preload-vocabulary",
@@ -26,10 +28,11 @@ function preloadVocabulary(): Plugin {
       handler: (_, context) => {
         const asset = Object.values(context.bundle ?? {}).find((file) => file.type === "asset" && /^assets\/cherubini-.*\.json$/.test(file.fileName));
         if (!asset) return [];
+        const link = JSON.stringify({ rel: "preload", as: "fetch", type: "application/json", crossOrigin: "anonymous", href: `${BASE}${asset.fileName}` });
         return [
           {
-            tag: "link",
-            attrs: { rel: "preload", as: "fetch", type: "application/json", crossorigin: "anonymous", href: `${BASE}${asset.fileName}` },
+            tag: "script",
+            children: `try{if(!sessionStorage.getItem("cherubini.vocabulary"))document.head.append(Object.assign(document.createElement("link"),${link}))}catch{}`,
             injectTo: "head",
           },
         ];

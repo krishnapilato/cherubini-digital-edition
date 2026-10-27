@@ -13,6 +13,14 @@ Il progetto riprende *Voci tecniche*, il programma in Microsoft Access 2000 real
 - **Web**: si usa dal browser, senza installare niente → <https://krishnapilato.github.io/cherubini-digital-edition/>
 - **Desktop**: app portatile per Windows, macOS e Linux, con Java già incluso → [ultima versione](https://github.com/krishnapilato/cherubini-digital-edition/releases/latest)
 
+## Come si presenta
+
+![Pagina iniziale dell'edizione web: ricerca, ricerche recenti e lettere](docs/screenshots/web-lente.png)
+
+![Ricerca di «ferro» nelle definizioni, con la voce aperta e la parola evidenziata](docs/screenshots/web-ricerca.png)
+
+<!-- ![Edizione desktop mentre si sfoglia una lettera](docs/screenshots/desktop.png) -->
+
 ## Cosa si può fare
 
 - **Cercare mentre si scrive**, fino a quattro parole insieme: si trovano le voci che le contengono tutte.
@@ -34,6 +42,8 @@ Il progetto riprende *Voci tecniche*, il programma in Microsoft Access 2000 real
 | `guide/` | La guida all'uso (HTML, CSS, JS con GSAP), condivisa dalle due edizioni |
 | `desktop/` | App JavaFX: Java 27, JavaFX 27, AtlantaFX, SQLite |
 | `web/` | App React: React 19.3, TypeScript 7, Vite 8, Zustand, GSAP |
+| `tests/` | Casi di ricerca condivisi dai test delle due edizioni |
+| `docs/screenshots/` | Le immagini di questo README |
 | `.github/workflows/` | Pubblicazione del sito e delle versioni desktop |
 
 ## Edizione desktop
@@ -46,6 +56,8 @@ mvn javafx:run
 ```
 
 `mvn package` crea `target/cherubini.jar`, un unico jar con dentro JavaFX per Windows, macOS e Linux. Durante la build Maven genera il database SQLite partendo da `data/cherubini.json` (`desktop/tools/BuildDatabase.java`), quindi il file `.db` non sta nel repository. Anche la guida viene presa da `guide/`: il pulsante `?` la estrae in una cartella temporanea e la apre nel browser.
+
+Il codice viene controllato a ogni compilazione: i warning di `javac` (`-Xlint:all`) sono errori e PMD, con le regole di `desktop/pmd-ruleset.xml`, ferma la build se trova import, campi, variabili o metodi inutilizzati, codice troppo complesso o errori tipici. Vale per `mvn compile`, `mvn javafx:run`, la configurazione di IntelliJ e le build delle release. `mvn test` esegue i test JUnit (vedi [Test e controlli](#test-e-controlli)).
 
 ## Edizione web
 
@@ -63,6 +75,7 @@ L'app si apre su <http://localhost:5173/cherubini-digital-edition/> e la guida s
 |---|---|
 | `npm run typecheck` | Controllo dei tipi con TypeScript 7 in modalità rigorosa |
 | `npm run lint` | ESLint con le regole SonarJS (le stesse di SonarLint) e jsx-a11y; ogni avviso blocca |
+| `npm test` | Test con Vitest |
 | `npm run build` | Controllo dei tipi, lint e build di produzione in `web/dist` |
 
 Alcune scelte tecniche:
@@ -70,11 +83,26 @@ Alcune scelte tecniche:
 - I dati non stanno nel JavaScript. Il JSON viene scaricato in parallelo all'app (con un `preload`) e salvato nel `sessionStorage`.
 - Anche lo stato della consultazione è nel `sessionStorage`, tramite Zustand: ricerca, lettera, voce aperta, voci da stampare e ricerche recenti. Ricaricando la pagina si resta dove si era; chiudendo la scheda il browser cancella tutto. Nessun dato esce dal browser.
 - L'elenco dei risultati è virtualizzato con TanStack Virtual: anche con 2.307 voci la pagina contiene solo le righe visibili.
-- I pannelli sono `<dialog>` nativi: focus, tasto Esc e ritorno del focus li gestisce il browser.
+- I pannelli e la guida sono `<dialog>` nativi: focus, tasto Esc e ritorno del focus li gestisce il browser.
+
+Punteggi [Lighthouse](https://developer.chrome.com/docs/lighthouse) 13.5 del sito pubblicato (ottobre 2026):
+
+| | Prestazioni | Accessibilità | Best practice | SEO |
+|---|:-:|:-:|:-:|:-:|
+| Desktop | 100 | 100 | 100 | 100 |
+| Mobile | 95 | 100 | 100 | 100 |
+
+## Test e controlli
+
+La ricerca è scritta due volte, in TypeScript e in Java, quindi le due edizioni passano gli stessi casi: [`tests/search-cases.json`](tests/search-cases.json) contiene normalizzazione di accenti e maiuscole, divisione della ricerca in parole, parti da evidenziare, conteggio delle voci per lettera e i risultati attesi di varie ricerche sul vocabolario vero. Li leggono sia Vitest (`web/src/search.test.ts`) sia JUnit (`desktop/src/test/java`); ci sono poi test sulle ricerche recenti e sulla selezione da stampare.
+
+- **CI** (`.github/workflows/ci.yml`): a ogni push e pull request esegue tipi, lint, test e build del web e, su Linux e Windows, compilazione senza warning, PMD e test del desktop.
+- **Pubblicazione**: il sito viene pubblicato e le release desktop vengono create solo se gli stessi controlli passano.
+- **Dipendenze**: Dependabot (`.github/dependabot.yml`) propone ogni settimana gli aggiornamenti di npm, Maven e GitHub Actions, che passano dalla CI prima di poter essere uniti.
 
 ## Pubblicazione
 
-- **Sito**: ogni push su `main` che tocca `web/`, `guide/` o `data/cherubini.json` ricostruisce il sito e lo pubblica su GitHub Pages.
+- **Sito**: ogni push su `main` che tocca `web/`, `guide/`, `tests/` o `data/cherubini.json` ricostruisce il sito e lo pubblica su GitHub Pages.
 - **Desktop**: un tag `v*` (per esempio `v1.0.2`) costruisce i pacchetti portatili e crea la release su GitHub:
   - `Cherubini-windows.zip` per Windows 10/11
   - `Cherubini-macos-apple-silicon.zip` per Mac con chip Apple

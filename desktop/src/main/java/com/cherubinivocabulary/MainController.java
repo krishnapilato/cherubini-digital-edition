@@ -47,6 +47,8 @@ public final class MainController {
     @FXML
     private VBox lente;
     @FXML
+    private StackPane root;
+    @FXML
     private HBox lenteActions;
     @FXML
     private CustomTextField bigSearch;
@@ -71,7 +73,7 @@ public final class MainController {
     @FXML
     private Label wordsWarning;
     @FXML
-    private VBox lettersCard;
+    private ScrollPane lettersCard;
     @FXML
     private GridPane letterGrid;
     @FXML
@@ -202,7 +204,19 @@ public final class MainController {
         refreshPrint();
         showAbbreviationCategory();
         refresh();
-        Platform.runLater(bigSearch::requestFocus);
+        // JavaFX would focus the search field, which hides its placeholder: the page takes the focus instead.
+        Platform.runLater(root::requestFocus);
+        // As on a web page, clicking outside a text field takes the focus away from it.
+        root.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+            if (!(event.getTarget() instanceof Node target && insideTextField(target))) root.requestFocus();
+        });
+    }
+
+    private static boolean insideTextField(Node node) {
+        for (Node current = node; current != null; current = current.getParent()) {
+            if (current instanceof TextInputControl) return true;
+        }
+        return false;
     }
 
     private void refresh() {
@@ -256,15 +270,15 @@ public final class MainController {
         wordsWarning.setText("Si cercano al massimo quattro parole: «" + String.join(" ", search.ignored()) + "» non viene considerato.");
         show(wordsWarning, !search.ignored().isEmpty());
         lemmaList.setPlaceholder(wrapped(search.exact() ? "Nessuna voce trovata. Prova ad attivare «Parole contenute»." : "Nessuna voce trovata. Controlla l'ortografia o usa meno parole."));
-        if (resultTabs.getSelectedToggle() == lemmasTab && inLemmas.isEmpty() && !inDefinitions.isEmpty())
+        if (lemmasTab.isSelected() && inLemmas.isEmpty() && !inDefinitions.isEmpty())
             resultTabs.selectToggle(definitionsTab);
-        if (resultTabs.getSelectedToggle() == definitionsTab && inDefinitions.isEmpty() && !inLemmas.isEmpty())
+        if (definitionsTab.isSelected() && inDefinitions.isEmpty() && !inLemmas.isEmpty())
             resultTabs.selectToggle(lemmasTab);
         showResults();
     }
 
     private void showResults() {
-        if (mode == Mode.STRUMENTO) showList(resultTabs.getSelectedToggle() == lemmasTab ? inLemmas : inDefinitions);
+        if (mode == Mode.STRUMENTO) showList(lemmasTab.isSelected() ? inLemmas : inDefinitions);
     }
 
     private void showList(List<Lemma> list) {
@@ -385,12 +399,16 @@ public final class MainController {
     }
 
     private void jumpToTypedPosition() {
+        int position = typedPosition();
+        if (position >= 1 && position <= shown.size()) select(position - 1);
+        else showSelected();
+    }
+
+    private int typedPosition() {
         try {
-            int position = Integer.parseInt(positionField.getText().strip());
-            if (position < 1 || position > shown.size()) throw new NumberFormatException();
-            select(position - 1);
+            return Integer.parseInt(positionField.getText().strip());
         } catch (NumberFormatException _) {
-            showSelected();
+            return 0;
         }
     }
 
@@ -458,12 +476,12 @@ public final class MainController {
             tile.setTooltip(new Tooltip(description));
             tile.setOnAction(_ -> openLetter(key));
             tile.setMaxWidth(Double.MAX_VALUE);
-            letterGrid.add(tile, i % 4, i / 4);
+            letterGrid.add(tile, i % 2, i / 2);
             tiles.put(key, tile);
         }
-        IntStream.range(0, 4).forEach(_ -> {
+        IntStream.range(0, 2).forEach(_ -> {
             var column = new ColumnConstraints();
-            column.setPercentWidth(25);
+            column.setPercentWidth(50);
             letterGrid.getColumnConstraints().add(column);
         });
     }
