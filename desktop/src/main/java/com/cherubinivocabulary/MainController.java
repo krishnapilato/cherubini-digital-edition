@@ -1,4 +1,4 @@
-package com.cherubinivocabulary.cherubinivocabulary;
+package com.cherubinivocabulary;
 
 import module java.base;
 import module javafx.controls;
@@ -17,12 +17,13 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 public final class MainController {
     private static final String ALL = "*";
+    private static final String SECONDARY = "secondary";
     private static final List<String> LETTERS = Stream.concat(Stream.of(ALL), "ABCDEFGHIJKLMNOPQRSTUVWXYZ".chars().mapToObj(Character::toString)).toList();
     private static final PseudoClass SELECTED = PseudoClass.getPseudoClass("selected");
     private static final int SNIPPET_LENGTH = 110;
     private static final int NO_OCCURRENCE = -1;
 
-    private enum Mode { LENTE, ATLANTE, STRUMENTO }
+    private enum Mode {LENTE, ATLANTE, STRUMENTO}
 
     private final List<Lemma> lemmas;
     private final History history;
@@ -43,58 +44,110 @@ public final class MainController {
     private List<Lemma> inDefinitions = List.of();
     private int occurrence = NO_OCCURRENCE;
 
-    @FXML private VBox lente;
-    @FXML private HBox lenteActions;
-    @FXML private CustomTextField bigSearch;
-    @FXML private ToggleSwitch bigContained;
-    @FXML private FlowPane recentPane;
-    @FXML private FlowPane letterPane;
-    @FXML private Label lentePrintBadge;
-    @FXML private BorderPane workspace;
-    @FXML private CustomTextField barSearch;
-    @FXML private Button clearButton;
-    @FXML private ToggleSwitch barContained;
-    @FXML private Label barPrintBadge;
-    @FXML private Label wordsWarning;
-    @FXML private VBox lettersCard;
-    @FXML private GridPane letterGrid;
-    @FXML private HBox atlanteHeader;
-    @FXML private Label listTitle;
-    @FXML private Label listCount;
-    @FXML private VBox searchHeader;
-    @FXML private ToggleGroup resultTabs;
-    @FXML private ToggleButton lemmasTab;
-    @FXML private ToggleButton definitionsTab;
-    @FXML private Label searchSummary;
-    @FXML private ListView<Lemma> lemmaList;
-    @FXML private Button firstButton;
-    @FXML private Button previousButton;
-    @FXML private Label positionPrefix;
-    @FXML private TextField positionField;
-    @FXML private Label positionTotal;
-    @FXML private Button nextButton;
-    @FXML private Button lastButton;
-    @FXML private HBox occurrenceBox;
-    @FXML private Label occurrenceLabel;
-    @FXML private Button previousOccurrenceButton;
-    @FXML private Button nextOccurrenceButton;
-    @FXML private Label lemmaNumber;
-    @FXML private TextFlow lemmaTitle;
-    @FXML private StackPane definitionHolder;
-    @FXML private CheckBox selectedToPrint;
-    @FXML private Label readingHint;
-    @FXML private Label statusLabel;
-    @FXML private Label toast;
-    @FXML private ModalPane modal;
-    @FXML private VBox abbreviationsPanel;
-    @FXML private ToggleGroup abbreviationCategories;
-    @FXML private Label abbreviationsMessage;
-    @FXML private VBox printPanel;
-    @FXML private Label printSubtitle;
-    @FXML private ListView<Lemma> printList;
-    @FXML private Button selectAllFoundButton;
-    @FXML private Button clearPrintButton;
-    @FXML private Button printNowButton;
+    @FXML
+    private VBox lente;
+    @FXML
+    private HBox lenteActions;
+    @FXML
+    private CustomTextField bigSearch;
+    @FXML
+    private ToggleSwitch bigContained;
+    @FXML
+    private FlowPane recentPane;
+    @FXML
+    private FlowPane letterPane;
+    @FXML
+    private Label lentePrintBadge;
+    @FXML
+    private BorderPane workspace;
+    @FXML
+    private CustomTextField barSearch;
+    @FXML
+    private Button clearButton;
+    @FXML
+    private ToggleSwitch barContained;
+    @FXML
+    private Label barPrintBadge;
+    @FXML
+    private Label wordsWarning;
+    @FXML
+    private VBox lettersCard;
+    @FXML
+    private GridPane letterGrid;
+    @FXML
+    private HBox atlanteHeader;
+    @FXML
+    private Label listTitle;
+    @FXML
+    private Label listCount;
+    @FXML
+    private VBox searchHeader;
+    @FXML
+    private ToggleGroup resultTabs;
+    @FXML
+    private ToggleButton lemmasTab;
+    @FXML
+    private ToggleButton definitionsTab;
+    @FXML
+    private Label searchSummary;
+    @FXML
+    private ListView<Lemma> lemmaList;
+    @FXML
+    private Button firstButton;
+    @FXML
+    private Button previousButton;
+    @FXML
+    private Label positionPrefix;
+    @FXML
+    private TextField positionField;
+    @FXML
+    private Label positionTotal;
+    @FXML
+    private Button nextButton;
+    @FXML
+    private Button lastButton;
+    @FXML
+    private HBox occurrenceBox;
+    @FXML
+    private Label occurrenceLabel;
+    @FXML
+    private Button previousOccurrenceButton;
+    @FXML
+    private Button nextOccurrenceButton;
+    @FXML
+    private Label lemmaNumber;
+    @FXML
+    private TextFlow lemmaTitle;
+    @FXML
+    private StackPane definitionHolder;
+    @FXML
+    private CheckBox selectedToPrint;
+    @FXML
+    private Label readingHint;
+    @FXML
+    private Label statusLabel;
+    @FXML
+    private Label toast;
+    @FXML
+    private ModalPane modal;
+    @FXML
+    private VBox abbreviationsPanel;
+    @FXML
+    private ToggleGroup abbreviationCategories;
+    @FXML
+    private Label abbreviationsMessage;
+    @FXML
+    private VBox printPanel;
+    @FXML
+    private Label printSubtitle;
+    @FXML
+    private ListView<Lemma> printList;
+    @FXML
+    private Button selectAllFoundButton;
+    @FXML
+    private Button clearPrintButton;
+    @FXML
+    private Button printNowButton;
 
     public MainController(List<Lemma> lemmas, History history, HostServices host) {
         this.lemmas = lemmas;
@@ -154,13 +207,15 @@ public final class MainController {
 
     private void refresh() {
         search = Search.Query.of(query.get(), !contained.get());
-        Mode next = !search.isEmpty() ? Mode.STRUMENTO : browsing ? Mode.ATLANTE : Mode.LENTE;
+        Mode next = nextMode();
         switchTo(next);
-        switch (next) {
-            case LENTE -> { }
-            case ATLANTE -> showLetter();
-            case STRUMENTO -> showSearch();
-        }
+        if (next == Mode.ATLANTE) showLetter();
+        else if (next == Mode.STRUMENTO) showSearch();
+    }
+
+    private Mode nextMode() {
+        if (!search.isEmpty()) return Mode.STRUMENTO;
+        return browsing ? Mode.ATLANTE : Mode.LENTE;
     }
 
     private void switchTo(Mode next) {
@@ -201,8 +256,10 @@ public final class MainController {
         wordsWarning.setText("Si cercano al massimo quattro parole: «" + String.join(" ", search.ignored()) + "» non viene considerato.");
         show(wordsWarning, !search.ignored().isEmpty());
         lemmaList.setPlaceholder(wrapped(search.exact() ? "Nessuna voce trovata. Prova ad attivare «Parole contenute»." : "Nessuna voce trovata. Controlla l'ortografia o usa meno parole."));
-        if (resultTabs.getSelectedToggle() == lemmasTab && inLemmas.isEmpty() && !inDefinitions.isEmpty()) resultTabs.selectToggle(definitionsTab);
-        if (resultTabs.getSelectedToggle() == definitionsTab && inDefinitions.isEmpty() && !inLemmas.isEmpty()) resultTabs.selectToggle(lemmasTab);
+        if (resultTabs.getSelectedToggle() == lemmasTab && inLemmas.isEmpty() && !inDefinitions.isEmpty())
+            resultTabs.selectToggle(definitionsTab);
+        if (resultTabs.getSelectedToggle() == definitionsTab && inDefinitions.isEmpty() && !inLemmas.isEmpty())
+            resultTabs.selectToggle(lemmasTab);
         showResults();
     }
 
@@ -249,7 +306,8 @@ public final class MainController {
     private void showDefinition(Lemma lemma) {
         List<Search.Range> ranges = matchesIn(lemma.searchableDefinition());
         definition.replaceText(lemma.definition());
-        if (!lemma.definition().isEmpty()) definition.setStyleSpans(0, highlighted(lemma.definition().length(), ranges));
+        if (!lemma.definition().isEmpty())
+            definition.setStyleSpans(0, highlighted(lemma.definition().length(), ranges));
         if (occurrence >= 0) {
             definition.moveTo(ranges.get(occurrence).start());
             definition.requestFollowCaret();
@@ -257,11 +315,19 @@ public final class MainController {
             definition.moveTo(0);
             definition.showParagraphAtTop(0);
         }
-        occurrenceLabel.setText(ranges.isEmpty() ? "Nessuna occorrenza"
-                : occurrence < 0 ? ranges.size() + (ranges.size() == 1 ? " occorrenza" : " occorrenze")
-                : "Occorrenza " + (occurrence + 1) + " di " + ranges.size());
+        occurrenceLabel.setText(occurrenceText(ranges.size()));
         previousOccurrenceButton.setDisable(ranges.isEmpty());
         nextOccurrenceButton.setDisable(ranges.isEmpty());
+    }
+
+    private String occurrenceText(int count) {
+        if (count == 0) return "Nessuna occorrenza";
+        if (occurrence < 0) return quantity(count, "occorrenza", "occorrenze");
+        return "Occorrenza " + (occurrence + 1) + " di " + count;
+    }
+
+    private static String quantity(long count, String one, String many) {
+        return count + " " + (count == 1 ? one : many);
     }
 
     private List<Search.Range> matchesIn(String searchableText) {
@@ -336,14 +402,10 @@ public final class MainController {
     }
 
     private void onSearchKey(KeyEvent event) {
-        switch (event.getCode()) {
-            case ENTER -> remember();
-            case ESCAPE -> query.set("");
-            case DOWN -> {
-                if (mode != Mode.LENTE) lemmaList.requestFocus();
-            }
-            default -> { }
-        }
+        KeyCode code = event.getCode();
+        if (code == KeyCode.ENTER) remember();
+        else if (code == KeyCode.ESCAPE) query.set("");
+        else if (code == KeyCode.DOWN && mode != Mode.LENTE) lemmaList.requestFocus();
     }
 
     private void remember() {
@@ -375,7 +437,7 @@ public final class MainController {
         for (int i = 0; i < LETTERS.size(); i++) {
             String key = LETTERS.get(i);
             long count = ALL.equals(key) ? lemmas.size() : counts.getOrDefault(key, 0L);
-            String description = ALL.equals(key) ? "Tutti i lemmi" : key + ": " + (count == 0 ? "nessun lemma" : format(count) + " lemmi");
+            String description = describeLetter(key, count);
 
             var pill = new Button(key);
             pill.getStyleClass().add("pill");
@@ -406,18 +468,23 @@ public final class MainController {
         });
     }
 
+    private static String describeLetter(String key, long count) {
+        if (ALL.equals(key)) return "Tutti i lemmi";
+        return key + ": " + (count == 0 ? "nessun lemma" : format(count) + " lemmi");
+    }
+
     private void refreshRecent() {
         List<String> recent = history.recent();
         recentPane.getChildren().clear();
         show(recentPane, !recent.isEmpty());
         if (recent.isEmpty()) return;
         var label = new Label("Recenti");
-        label.getStyleClass().add("secondary");
+        label.getStyleClass().add(SECONDARY);
         recentPane.getChildren().add(label);
         recent.forEach(text -> {
-            var search = new Button(text, new FontIcon("fth-clock"));
-            search.getStyleClass().add("chip-search");
-            search.setOnAction(_ -> {
+            var repeat = new Button(text, new FontIcon("fth-clock"));
+            repeat.getStyleClass().add("chip-search");
+            repeat.setOnAction(_ -> {
                 query.set(text);
                 refresh();
                 remember();
@@ -426,7 +493,7 @@ public final class MainController {
             remove.getStyleClass().add("chip-remove");
             remove.setTooltip(new Tooltip("Togli dalle recenti"));
             remove.setAccessibleText("Togli «" + text + "» dalle recenti");
-            var chip = new HBox(search, remove);
+            var chip = new HBox(repeat, remove);
             chip.getStyleClass().add("chip");
             chip.setAlignment(Pos.CENTER_LEFT);
             remove.setOnAction(_ -> {
@@ -460,8 +527,8 @@ public final class MainController {
         int count = toPrint.size();
         List<Lemma> chosen = lemmas.stream().filter(lemma -> toPrint.contains(lemma.id())).toList();
         printList.getItems().setAll(chosen);
-        printSubtitle.setText(count == 0 ? "Nessuna voce scelta" : count + (count == 1 ? " voce scelta" : " voci scelte"));
-        printNowButton.setText(count == 0 ? "Stampa" : "Stampa " + count + (count == 1 ? " voce" : " voci"));
+        printSubtitle.setText(count == 0 ? "Nessuna voce scelta" : quantity(count, "voce scelta", "voci scelte"));
+        printNowButton.setText(count == 0 ? "Stampa" : "Stampa " + quantity(count, "voce", "voci"));
         printNowButton.setDisable(count == 0);
         clearPrintButton.setDisable(count == 0);
         selectAllFoundButton.setDisable(mode != Mode.STRUMENTO || shown.isEmpty());
@@ -562,7 +629,7 @@ public final class MainController {
         var label = new Label(text);
         label.setWrapText(true);
         label.setTextAlignment(TextAlignment.CENTER);
-        label.getStyleClass().add("secondary");
+        label.getStyleClass().add(SECONDARY);
         return label;
     }
 
@@ -641,7 +708,7 @@ public final class MainController {
             var name = new Label(lemma.lemma());
             name.getStyleClass().add("print-lemma");
             var number = new Label("N° " + lemma.id());
-            number.getStyleClass().addAll("secondary", "small");
+            number.getStyleClass().addAll(SECONDARY, "small");
             var texts = new VBox(name, number);
             HBox.setHgrow(texts, Priority.ALWAYS);
             var remove = new Button(null, new FontIcon("fth-x"));

@@ -1,4 +1,4 @@
-package com.cherubinivocabulary.cherubinivocabulary;
+package com.cherubinivocabulary;
 
 import module java.logging;
 

@@ -6,7 +6,7 @@
 
     <groupId>com.cherubinivocabulary</groupId>
     <artifactId>cherubini-vocabulary</artifactId>
-    <version>1.0.2</version>
+    <version>1.1.0</version>
     <name>cherubini-vocabulary</name>
 
     <properties>
@@ -14,7 +14,7 @@
         <maven.compiler.release>27</maven.compiler.release>
         <javafx.version>27.0.1</javafx.version>
         <javafx.mac.classifier>mac-aarch64</javafx.mac.classifier>
-        <main.class>com.cherubinivocabulary.cherubinivocabulary.Launcher</main.class>
+        <main.class>com.cherubinivocabulary.Launcher</main.class>
     </properties>
 
     <dependencies>
@@ -62,6 +62,16 @@
             </resource>
             <resource>
                 <directory>${project.build.directory}/generated-resources/database</directory>
+            </resource>
+            <!-- The help guide is shared with the web edition; Help.java takes the icon and fonts from the app's own resources. -->
+            <resource>
+                <directory>../guide</directory>
+                <targetPath>com/cherubinivocabulary/help</targetPath>
+                <excludes>
+                    <exclude>*.png</exclude>
+                    <exclude>*.ttf</exclude>
+                    <exclude>OFL.txt</exclude>
+                </excludes>
             </resource>
         </resources>
         <pluginManagement>
@@ -140,7 +150,7 @@
                 <version>0.0.8</version>
                 <configuration>
                     <mainClass>
-                        com.cherubinivocabulary.cherubinivocabulary/com.cherubinivocabulary.cherubinivocabulary.CherubiniApp
+                        com.cherubinivocabulary/com.cherubinivocabulary.CherubiniApp
                     </mainClass>
                     <options>
                         <option>--enable-native-access=javafx.graphics,org.xerial.sqlitejdbc</option>

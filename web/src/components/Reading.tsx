@@ -3,25 +3,30 @@ import gsap from "gsap";
 import { ArrowLeft, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, SkipBack, SkipForward } from "lucide-react";
 import { useRef } from "react";
 import type { Range } from "../search";
-import type { Lemma } from "../vocabulary";
-import { formatNumber } from "../vocabulary";
+import { formatNumber, type Lemma } from "../vocabulary";
 import { Highlight } from "./Highlight";
 
-type Props = {
-  lemma: Lemma | null;
-  index: number;
-  total: number;
-  searching: boolean;
-  lemmaRanges: Range[];
-  definitionRanges: Range[];
-  occurrence: number;
-  onGo: (index: number) => void;
-  onNextOccurrence: () => void;
-  onPreviousOccurrence: () => void;
-  printed: boolean;
-  onTogglePrint: () => void;
-  onBack: () => void;
-};
+interface Props {
+  readonly lemma: Lemma | null;
+  readonly index: number;
+  readonly total: number;
+  readonly searching: boolean;
+  readonly lemmaRanges: readonly Range[];
+  readonly definitionRanges: readonly Range[];
+  readonly occurrence: number;
+  readonly onGo: (index: number) => void;
+  readonly onNextOccurrence: () => void;
+  readonly onPreviousOccurrence: () => void;
+  readonly printed: boolean;
+  readonly onTogglePrint: () => void;
+  readonly onBack: () => void;
+}
+
+function describeOccurrence(count: number, occurrence: number): string {
+  if (count === 0) return "Nessuna occorrenza";
+  if (occurrence < 0) return `${count} ${count === 1 ? "occorrenza" : "occorrenze"}`;
+  return `Occorrenza ${occurrence + 1} di ${count}`;
+}
 
 export function Reading(props: Props) {
   const scope = useRef<HTMLElement>(null);
@@ -29,9 +34,10 @@ export function Reading(props: Props) {
 
   useGSAP(
     () => {
-      gsap.from(".reading-content", { y: 10, opacity: 0, duration: 0.35, ease: "power2.out" });
+      const content = scope.current?.querySelector(".reading-content");
+      if (content) gsap.from(content, { y: 10, opacity: 0, duration: 0.35, ease: "power2.out" });
     },
-    { scope, dependencies: [lemma?.id] },
+    { scope, dependencies: [lemma?.id], revertOnUpdate: true },
   );
 
   useGSAP(
@@ -41,32 +47,29 @@ export function Reading(props: Props) {
       current.scrollIntoView({ block: "nearest" });
       gsap.from(current, { scale: 1.3, duration: 0.4, ease: "back.out(3)" });
     },
-    { scope, dependencies: [occurrence, lemma?.id] },
+    { scope, dependencies: [occurrence, lemma?.id], revertOnUpdate: true },
   );
 
-  const occurrenceLabel = definitionRanges.length === 0
-    ? "Nessuna occorrenza"
-    : occurrence < 0
-      ? `${definitionRanges.length} ${definitionRanges.length === 1 ? "occorrenza" : "occorrenze"}`
-      : `Occorrenza ${occurrence + 1} di ${definitionRanges.length}`;
+  const occurrenceLabel = describeOccurrence(definitionRanges.length, occurrence);
 
   return (
     <article className="card reading-card" ref={scope} aria-label="Voce">
       <div className="reading-toolbar">
         <button type="button" className="icon-button back" aria-label="Torna all'elenco" onClick={props.onBack}>
-          <ArrowLeft size={18} />
+          <ArrowLeft size={18} aria-hidden="true" />
         </button>
         <button type="button" className="icon-button" aria-label="Prima voce" title="Prima voce" disabled={index <= 0} onClick={() => props.onGo(0)}>
-          <SkipBack size={17} />
+          <SkipBack size={17} aria-hidden="true" />
         </button>
         <button type="button" className="icon-button" aria-label="Voce precedente" title="Voce precedente" disabled={index <= 0} onClick={() => props.onGo(index - 1)}>
-          <ChevronLeft size={18} />
+          <ChevronLeft size={18} aria-hidden="true" />
         </button>
         <label className="position">
           <span>{searching ? "Voce" : "Lemma"}</span>
           <input
             key={index}
             aria-label="Posizione della voce"
+            inputMode="numeric"
             defaultValue={total ? index + 1 : ""}
             onKeyDown={(event) => {
               if (event.key !== "Enter") return;
@@ -78,18 +81,18 @@ export function Reading(props: Props) {
           <span>di {formatNumber(total)}</span>
         </label>
         <button type="button" className="icon-button" aria-label="Voce successiva" title="Voce successiva" disabled={index >= total - 1} onClick={() => props.onGo(index + 1)}>
-          <ChevronRight size={18} />
+          <ChevronRight size={18} aria-hidden="true" />
         </button>
         <button type="button" className="icon-button" aria-label="Ultima voce" title="Ultima voce" disabled={index >= total - 1} onClick={() => props.onGo(total - 1)}>
-          <SkipForward size={17} />
+          <SkipForward size={17} aria-hidden="true" />
         </button>
         {searching && (
           <div className="occurrences">
-            <span>{occurrenceLabel}</span>
-            <button type="button" className="icon-button" aria-label="Occorrenza precedente" title="Occorrenza precedente" disabled={!definitionRanges.length} onClick={props.onPreviousOccurrence}>
-              <ChevronUp size={18} />
+            <span aria-live="polite">{occurrenceLabel}</span>
+            <button type="button" className="icon-button" aria-label="Occorrenza precedente" title="Occorrenza precedente" disabled={definitionRanges.length === 0} onClick={props.onPreviousOccurrence}>
+              <ChevronUp size={18} aria-hidden="true" />
             </button>
-            <button type="button" className="button" title="Occorrenza successiva (F3)" disabled={!definitionRanges.length} onClick={props.onNextOccurrence}>
+            <button type="button" className="button" title="Occorrenza successiva (F3)" disabled={definitionRanges.length === 0} onClick={props.onNextOccurrence}>
               <ChevronDown size={17} aria-hidden="true" />
               Successiva <kbd>F3</kbd>
             </button>

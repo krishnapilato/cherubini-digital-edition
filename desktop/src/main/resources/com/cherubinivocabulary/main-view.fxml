@@ -25,7 +25,7 @@
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <StackPane xmlns:fx="http://javafx.com/fxml"
-           fx:controller="com.cherubinivocabulary.cherubinivocabulary.MainController"
+           fx:controller="com.cherubinivocabulary.MainController"
            styleClass="app">
 
     <fx:define>
@@ -33,7 +33,7 @@
         <ToggleGroup fx:id="abbreviationCategories"/>
 
         <VBox fx:id="abbreviationsPanel" styleClass="panel" prefWidth="380" maxWidth="380" maxHeight="Infinity">
-            <HBox alignment="TOP_LEFT">
+            <HBox>
                 <VBox HBox.hgrow="ALWAYS">
                     <Label text="Abbreviazioni" styleClass="panel-title"/>
                     <Label text="usate nel Vocabolario Cherubini" styleClass="secondary"/>
@@ -57,7 +57,7 @@
         </VBox>
 
         <VBox fx:id="printPanel" styleClass="panel" prefWidth="380" maxWidth="380" maxHeight="Infinity">
-            <HBox alignment="TOP_LEFT">
+            <HBox>
                 <VBox HBox.hgrow="ALWAYS">
                     <Label text="Stampa" styleClass="panel-title"/>
                     <Label fx:id="printSubtitle" styleClass="secondary"/>
@@ -82,7 +82,7 @@
     <VBox>
         <StackPane VBox.vgrow="ALWAYS">
             <VBox fx:id="lente" styleClass="lente" alignment="CENTER" spacing="18">
-                <ImageView fitWidth="60" fitHeight="60" preserveRatio="true" smooth="true">
+                <ImageView fitWidth="60" fitHeight="60" preserveRatio="true">
                     <Image url="@icon.png"/>
                 </ImageView>
                 <VBox alignment="CENTER" spacing="2">
@@ -121,7 +121,7 @@
                     <HBox styleClass="topbar" alignment="CENTER_LEFT" spacing="12">
                         <Button text="Cherubini" styleClass="flat, home" onAction="#goHome">
                             <graphic>
-                                <ImageView fitWidth="28" fitHeight="28" preserveRatio="true" smooth="true">
+                                <ImageView fitWidth="28" fitHeight="28" preserveRatio="true">
                                     <Image url="@icon.png"/>
                                 </ImageView>
                             </graphic>

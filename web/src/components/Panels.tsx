@@ -1,6 +1,6 @@
 import { List, Printer, X } from "lucide-react";
 import { useState } from "react";
-import type { Lemma } from "../vocabulary";
+import { quantity, type Lemma } from "../vocabulary";
 import { SidePanel } from "./SidePanel";
 
 const CATEGORIES = [
@@ -10,7 +10,7 @@ const CATEGORIES = [
   ["Contr.", "Contrazioni"],
 ] as const;
 
-export function AbbreviationsPanel({ onClosed }: { onClosed: () => void }) {
+export function AbbreviationsPanel({ onClosed }: Readonly<{ onClosed: () => void }>) {
   const [category, setCategory] = useState<string>(CATEGORIES[0][1]);
   return (
     <SidePanel title="Abbreviazioni" subtitle="usate nel Vocabolario Cherubini" onClosed={onClosed}>
@@ -36,20 +36,20 @@ export function AbbreviationsPanel({ onClosed }: { onClosed: () => void }) {
   );
 }
 
-type PrintProps = {
-  chosen: Lemma[];
-  canSelectFound: boolean;
-  onSelectFound: () => void;
-  onRemove: (id: number) => void;
-  onClear: () => void;
-  onPrint: () => void;
-  onClosed: () => void;
-};
+interface PrintProps {
+  readonly chosen: readonly Lemma[];
+  readonly canSelectFound: boolean;
+  readonly onSelectFound: () => void;
+  readonly onRemove: (id: number) => void;
+  readonly onClear: () => void;
+  readonly onPrint: () => void;
+  readonly onClosed: () => void;
+}
 
 export function PrintPanel({ chosen, canSelectFound, onSelectFound, onRemove, onClear, onPrint, onClosed }: PrintProps) {
   const count = chosen.length;
   return (
-    <SidePanel title="Stampa" subtitle={count === 0 ? "Nessuna voce scelta" : `${count} ${count === 1 ? "voce scelta" : "voci scelte"}`} onClosed={onClosed}>
+    <SidePanel title="Stampa" subtitle={count === 0 ? "Nessuna voce scelta" : quantity(count, "voce scelta", "voci scelte")} onClosed={onClosed}>
       {(close) => (
         <>
           {count === 0 ? (
@@ -63,7 +63,7 @@ export function PrintPanel({ chosen, canSelectFound, onSelectFound, onRemove, on
                     <small>N° {lemma.id}</small>
                   </div>
                   <button type="button" className="icon-button" aria-label={`Togli ${lemma.lemma} dalla stampa`} title="Togli dalla stampa" onClick={() => onRemove(lemma.id)}>
-                    <X size={16} />
+                    <X size={16} aria-hidden="true" />
                   </button>
                 </li>
               ))}
@@ -88,7 +88,7 @@ export function PrintPanel({ chosen, canSelectFound, onSelectFound, onRemove, on
               }}
             >
               <Printer size={17} aria-hidden="true" />
-              {count === 0 ? "Stampa" : `Stampa ${count} ${count === 1 ? "voce" : "voci"}`}
+              {count === 0 ? "Stampa" : `Stampa ${quantity(count, "voce", "voci")}`}
             </button>
             <p className="note">Si apre la finestra di stampa del browser per scegliere la stampante.</p>
           </footer>
@@ -98,7 +98,7 @@ export function PrintPanel({ chosen, canSelectFound, onSelectFound, onRemove, on
   );
 }
 
-export function PrintSheet({ chosen }: { chosen: Lemma[] }) {
+export function PrintSheet({ chosen }: Readonly<{ chosen: readonly Lemma[] }>) {
   return (
     <section className="print-sheet" aria-hidden="true">
       <h1>Vocabolario milanese–italiano di Francesco Cherubini</h1>

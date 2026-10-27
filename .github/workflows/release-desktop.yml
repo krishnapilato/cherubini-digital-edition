@@ -33,7 +33,7 @@ jobs:
         shell: bash
         working-directory: desktop
     env:
-      ICON_PNG: src/main/resources/com/cherubinivocabulary/cherubinivocabulary/icon.png
+      ICON_PNG: src/main/resources/com/cherubinivocabulary/icon.png
     steps:
       - uses: actions/checkout@v7
 
@@ -85,7 +85,7 @@ jobs:
           jpackage --type app-image --name Cherubini --app-version "$VERSION" \
             --vendor "Stefano Pilato e Khova Krishna Pilato" \
             --input target/app --main-jar cherubini.jar \
-            --main-class com.cherubinivocabulary.cherubinivocabulary.Launcher \
+            --main-class com.cherubinivocabulary.Launcher \
             --runtime-image target/runtime --icon "$icon" \
             --java-options "--enable-native-access=ALL-UNNAMED" \
             --dest target/dist

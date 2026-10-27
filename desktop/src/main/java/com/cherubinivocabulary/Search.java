@@ -1,4 +1,4 @@
-package com.cherubinivocabulary.cherubinivocabulary;
+package com.cherubinivocabulary;
 
 import module java.base;
 
@@ -33,7 +33,7 @@ final class Search {
     }
 
     static boolean matches(String searchableText, Query query) {
-        return query.words().stream().allMatch(word -> !find(searchableText, List.of(word), query.exact()).isEmpty());
+        return query.words().stream().noneMatch(word -> find(searchableText, List.of(word), query.exact()).isEmpty());
     }
 
     static List<Range> find(String searchableText, Query query) {

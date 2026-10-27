@@ -1,8 +1,8 @@
-package com.cherubinivocabulary.cherubinivocabulary;
+package com.cherubinivocabulary;
 
 import module java.base;
 
-record Lemma(long id, String lemma, String definition, String searchableLemma, String searchableDefinition) {
+public record Lemma(long id, String lemma, String definition, String searchableLemma, String searchableDefinition) {
 
     static Lemma of(long id, String lemma, String definition) {
         String text = definition == null ? "" : definition.strip();

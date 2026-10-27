@@ -1,4 +1,4 @@
-package com.cherubinivocabulary.cherubinivocabulary;
+package com.cherubinivocabulary;
 
 import module java.base;
 import module javafx.controls;
@@ -9,8 +9,7 @@ final class Printing {
     private static final Font DEFINITION = Font.font("IBM Plex Sans", 11);
     private static final double GAP = 10;
 
-    private Printing() {
-    }
+    private Printing() {}
 
     static String print(List<Lemma> lemmas, Window owner) {
         if (Printer.getAllPrinters().isEmpty()) return "Nessuna stampante disponibile: controlla che una stampante sia installata e che il servizio di stampa del sistema sia attivo.";

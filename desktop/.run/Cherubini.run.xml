@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Cherubini" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="com.cherubinivocabulary.cherubinivocabulary.Launcher" />
+    <option name="MAIN_CLASS_NAME" value="com.cherubinivocabulary.Launcher" />
     <module name="cherubini-vocabulary" />
     <option name="VM_PARAMETERS" value="--enable-native-access=javafx.graphics,org.xerial.sqlitejdbc" />
     <method v="2">

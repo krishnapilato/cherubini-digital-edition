@@ -1,17 +1,26 @@
 export const MAX_WORDS = 4;
 
-export type Range = { start: number; end: number };
+export interface Range {
+  readonly start: number;
+  readonly end: number;
+}
 
-export type Query = { words: string[]; ignored: string[]; exact: boolean };
+export interface Query {
+  readonly words: readonly string[];
+  readonly ignored: readonly string[];
+  readonly exact: boolean;
+}
 
 const WORD_CHARACTER = /[\p{L}\p{N}]/u;
 const COMBINING_MARK = /\p{Mn}/u;
 
+// Lowercases and strips accents while keeping the exact length of the text, so the
+// positions found in the folded copy can highlight the original one.
 export function fold(text: string): string {
   let folded = "";
   for (let i = 0; i < text.length; i++) {
-    const base = text[i].normalize("NFD")[0];
-    folded += COMBINING_MARK.test(base) ? " " : base.toLowerCase()[0];
+    const base = text.charAt(i).normalize("NFD").charAt(0);
+    folded += COMBINING_MARK.test(base) ? " " : base.toLowerCase().charAt(0);
   }
   return folded;
 }
@@ -34,7 +43,7 @@ export function find(searchable: string, query: Query): Range[] {
   return findWords(searchable, query.words, query.exact);
 }
 
-function findWords(text: string, words: string[], exact: boolean): Range[] {
+function findWords(text: string, words: readonly string[], exact: boolean): Range[] {
   const found: Range[] = [];
   for (const word of words) {
     const term = fold(word);
@@ -47,13 +56,13 @@ function findWords(text: string, words: string[], exact: boolean): Range[] {
 }
 
 function isWholeWord(text: string, start: number, end: number): boolean {
-  const before = start === 0 || !WORD_CHARACTER.test(text[start - 1]);
-  const after = end === text.length || !WORD_CHARACTER.test(text[end]);
+  const before = start === 0 || !WORD_CHARACTER.test(text.charAt(start - 1));
+  const after = end === text.length || !WORD_CHARACTER.test(text.charAt(end));
   return before && after;
 }
 
-function merge(ranges: Range[]): Range[] {
-  const merged: Range[] = [];
+function merge(ranges: readonly Range[]): Range[] {
+  const merged: { start: number; end: number }[] = [];
   for (const range of [...ranges].sort((a, b) => a.start - b.start)) {
     const last = merged.at(-1);
     if (last && range.start <= last.end) last.end = Math.max(last.end, range.end);

@@ -1,4 +1,4 @@
-module com.cherubinivocabulary.cherubinivocabulary {
+module com.cherubinivocabulary {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
@@ -11,5 +11,5 @@ module com.cherubinivocabulary.cherubinivocabulary {
     requires org.fxmisc.flowless;
     requires org.xerial.sqlitejdbc;
 
-    opens com.cherubinivocabulary.cherubinivocabulary to javafx.fxml, javafx.graphics;
+    opens com.cherubinivocabulary to javafx.fxml, javafx.graphics;
 }

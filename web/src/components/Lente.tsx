@@ -3,24 +3,28 @@ import gsap from "gsap";
 import { Clock, Search, X } from "lucide-react";
 import { useRef, type KeyboardEvent, type RefObject } from "react";
 import icon from "../assets/cherubini.svg";
-import { countOf, formatNumber, LETTERS, ALL } from "../vocabulary";
+import { useSession } from "../store";
+import { ALL, formatNumber, LETTERS } from "../vocabulary";
 import { Switch } from "./Switch";
 
-type Props = {
-  query: string;
-  onQuery: (query: string) => void;
-  onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => void;
-  inputRef: RefObject<HTMLInputElement | null>;
-  contained: boolean;
-  onContained: (contained: boolean) => void;
-  recent: string[];
-  onRecent: (search: string) => void;
-  onForget: (search: string) => void;
-  onLetter: (letter: string) => void;
-};
+interface Props {
+  readonly onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => void;
+  readonly inputRef: RefObject<HTMLInputElement | null>;
+  readonly countOf: (letter: string) => number;
+}
 
-export function Lente({ query, onQuery, onKeyDown, inputRef, contained, onContained, recent, onRecent, onForget, onLetter }: Props) {
+function describeLetter(letter: string, count: number): string {
+  if (letter === ALL) return "Tutti i lemmi";
+  if (count === 0) return `${letter}: nessun lemma`;
+  return `${letter}: ${formatNumber(count)} lemmi`;
+}
+
+export function Lente({ onKeyDown, inputRef, countOf }: Props) {
   const scope = useRef<HTMLElement>(null);
+  const query = useSession((state) => state.query);
+  const contained = useSession((state) => state.contained);
+  const recent = useSession((state) => state.recent);
+  const { setQuery, setContained, remember, forget, openLetter } = useSession.getState();
 
   const { contextSafe } = useGSAP(
     () => {
@@ -30,8 +34,9 @@ export function Lente({ query, onQuery, onKeyDown, inputRef, contained, onContai
     { scope },
   );
 
-  const forget = contextSafe((chip: HTMLElement | null, search: string) => {
-    gsap.to(chip, { scale: 0.6, opacity: 0, duration: 0.22, ease: "power2.in", onComplete: () => onForget(search) });
+  const vanish = contextSafe((chip: HTMLElement | null, search: string) => {
+    if (chip) gsap.to(chip, { scale: 0.6, opacity: 0, duration: 0.22, ease: "power2.in", onComplete: () => forget(search) });
+    else forget(search);
   });
 
   return (
@@ -41,50 +46,63 @@ export function Lente({ query, onQuery, onKeyDown, inputRef, contained, onContai
         <h1>Vocabolario milanese–italiano</h1>
         <p>Francesco Cherubini · voci tecniche</p>
       </div>
-      <label className="lente-item big-search">
+      <search className="lente-item big-search">
         <Search size={22} aria-hidden="true" />
         <input
           ref={inputRef}
-          autoFocus
+          type="search"
           aria-label="Cerca nel vocabolario"
           placeholder="Cerca un lemma o fino a quattro parole"
           value={query}
-          onChange={(event) => onQuery(event.target.value)}
+          onChange={(event) => setQuery(event.target.value)}
           onKeyDown={onKeyDown}
         />
-        <Switch checked={contained} onChange={onContained} label="Parole contenute" />
-      </label>
+        <Switch checked={contained} onChange={setContained} label="Parole contenute" />
+      </search>
       <p className="lente-item hint">La ricerca parte mentre scrivi · Invio la salva tra le recenti</p>
       {recent.length > 0 && (
-        <div className="lente-item recent">
-          <span>Recenti</span>
+        <div className="lente-item recent" role="group" aria-label="Ricerche recenti">
+          <span aria-hidden="true">Recenti</span>
           {recent.map((search) => (
             <span key={search} className="chip">
-              <button type="button" className="chip-search" onClick={() => onRecent(search)}>
+              <button
+                type="button"
+                className="chip-search"
+                onClick={() => {
+                  setQuery(search);
+                  remember(search);
+                }}
+              >
                 <Clock size={14} aria-hidden="true" />
                 {search}
               </button>
-              <button type="button" className="chip-remove" aria-label={`Togli «${search}» dalle recenti`} title="Togli dalle recenti" onClick={(event) => forget(event.currentTarget.parentElement, search)}>
-                <X size={13} />
+              <button
+                type="button"
+                className="chip-remove"
+                aria-label={`Togli «${search}» dalle recenti`}
+                title="Togli dalle recenti"
+                onClick={(event) => vanish(event.currentTarget.parentElement, search)}
+              >
+                <X size={13} aria-hidden="true" />
               </button>
             </span>
           ))}
         </div>
       )}
-      <div className="lente-item letters">
-        <span>Oppure sfoglia per lettera</span>
+      <nav className="lente-item letters" aria-label="Sfoglia per lettera">
+        <span aria-hidden="true">Oppure sfoglia per lettera</span>
         <div className="pills">
           {LETTERS.map((letter) => {
             const count = countOf(letter);
-            const description = letter === ALL ? "Tutti i lemmi" : `${letter}: ${count ? `${formatNumber(count)} lemmi` : "nessun lemma"}`;
+            const description = describeLetter(letter, count);
             return (
-              <button key={letter} type="button" className="pill" disabled={count === 0} title={description} aria-label={description} onClick={() => onLetter(letter)}>
+              <button key={letter} type="button" className="pill" disabled={count === 0} title={description} aria-label={description} onClick={() => openLetter(letter)}>
                 {letter}
               </button>
             );
           })}
         </div>
-      </div>
+      </nav>
     </main>
   );
 }

@@ -2,8 +2,12 @@
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
     "target": "ESNext",
-    "lib": ["ESNext"],
-    "types": ["node"],
+    "lib": [
+      "ESNext"
+    ],
+    "types": [
+      "node"
+    ],
     "skipLibCheck": true,
     "module": "NodeNext",
     "allowImportingTsExtensions": true,
@@ -17,7 +21,12 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false
   },
-  "include": ["vite.config.ts"]
+  "include": [
+    "vite.config.ts"
+  ]
 }

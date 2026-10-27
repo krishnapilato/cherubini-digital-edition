@@ -1,3 +1,6 @@
+// Like the app, the guide disables the context menu and text selection (see help.css).
+document.addEventListener("contextmenu", (event) => event.preventDefault());
+
 const toc = document.querySelector(".toc");
 const links = [...toc.querySelectorAll("a")];
 const sections = links.map((link) => document.querySelector(link.getAttribute("href")));
