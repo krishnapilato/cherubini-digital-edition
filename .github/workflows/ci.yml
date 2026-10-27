@@ -1,7 +1,8 @@
 name: CI
 
-# Every push and pull request runs the same checks as a release: types, lint and tests
-# for the web edition; compiler warnings, PMD and tests for the desktop edition.
+# Every push and pull request runs the same checks as a release: types, lint, tests and
+# interface tests for the web edition; compiler warnings, PMD, tests and interface tests
+# (on the JavaFX headless platform) for the desktop edition.
 on:
   push:
     branches: ["**"]
@@ -35,6 +36,9 @@ jobs:
       - run: npm test
 
       - run: npm run build
+
+      # Interface tests on the production build, in the Chrome already installed on the runner.
+      - run: npm run e2e
 
   desktop:
     strategy:

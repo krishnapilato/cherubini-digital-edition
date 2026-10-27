@@ -134,6 +134,13 @@ jobs:
           path: dist
           merge-multiple: true
 
+      # The fingerprints let anyone check that the downloaded file is exactly the one built here.
+      - name: Checksums
+        working-directory: dist
+        run: |
+          sha256sum -- * > SHA256SUMS.txt
+          { echo "CHECKSUMS<<EOF"; cat SHA256SUMS.txt; echo "EOF"; } >> "$GITHUB_ENV"
+
       - uses: softprops/action-gh-release@v3
         with:
           files: dist/*
@@ -157,5 +164,17 @@ jobs:
             - **macOS**: compare «Impossibile verificare che Cherubini non contenga malware». Clicca **Fine**, poi apri Impostazioni di Sistema → **Privacy e sicurezza**, scorri fino in fondo e clicca **Apri comunque** accanto a Cherubini. Conferma con la password o il Touch ID: dalla volta successiva si apre normalmente.
               Per sapere quale file scaricare: menu Apple → **Informazioni su questo Mac**. Se alla voce «Chip» c'è Apple M1, M2, M3, M4 o successivi, scegli la versione per chip Apple; se c'è «Processore» Intel, scegli quella Intel.
             - **Linux**: nessun avviso; serve solo rendere eseguibile il file.
+
+            ### Verificare il file scaricato
+
+            Ogni file ha un’impronta SHA-256: se quella del file scaricato è uguale a quella qui sotto, il file è integro e identico a quello costruito da GitHub.
+
+            ```
+            ${{ env.CHECKSUMS }}
+            ```
+
+            - **Windows** (PowerShell): `Get-FileHash Cherubini-windows.zip`
+            - **macOS**: `shasum -a 256 Cherubini-macos-apple-silicon.zip` (o il file Intel)
+            - **Linux**: `sha256sum -c SHA256SUMS.txt --ignore-missing`
 
             A cura di Stefano Pilato e Khova Krishna Pilato.

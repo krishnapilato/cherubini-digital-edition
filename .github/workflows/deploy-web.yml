@@ -41,6 +41,9 @@ jobs:
 
       - run: npm run build
 
+      # Interface tests on the production build, in the Chrome already installed on the runner.
+      - run: npm run e2e
+
       - uses: actions/configure-pages@v6
 
       - uses: actions/upload-pages-artifact@v5

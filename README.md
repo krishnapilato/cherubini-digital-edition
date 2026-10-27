@@ -76,6 +76,7 @@ L'app si apre su <http://localhost:5173/cherubini-digital-edition/> e la guida s
 | `npm run typecheck` | Controllo dei tipi con TypeScript 7 in modalità rigorosa |
 | `npm run lint` | ESLint con le regole SonarJS (le stesse di SonarLint) e jsx-a11y; ogni avviso blocca |
 | `npm test` | Test con Vitest |
+| `npm run e2e` | Test dell’interfaccia con Playwright sulla build di produzione (serve Chrome) |
 | `npm run build` | Controllo dei tipi, lint e build di produzione in `web/dist` |
 
 Alcune scelte tecniche:
@@ -96,7 +97,12 @@ Punteggi [Lighthouse](https://developer.chrome.com/docs/lighthouse) 13.5 del sit
 
 La ricerca è scritta due volte, in TypeScript e in Java, quindi le due edizioni passano gli stessi casi: [`tests/search-cases.json`](tests/search-cases.json) contiene normalizzazione di accenti e maiuscole, divisione della ricerca in parole, parti da evidenziare, conteggio delle voci per lettera e i risultati attesi di varie ricerche sul vocabolario vero. Li leggono sia Vitest (`web/src/search.test.ts`) sia JUnit (`desktop/src/test/java`); ci sono poi test sulle ricerche recenti e sulla selezione da stampare.
 
-- **CI** (`.github/workflows/ci.yml`): a ogni push e pull request esegue tipi, lint, test e build del web e, su Linux e Windows, compilazione senza warning, PMD e test del desktop.
+I test dell’interfaccia usano l’app vera come farebbe una persona: cercano scrivendo, sfogliano una lettera, usano `F3`, salvano e tolgono una ricerca recente, aprono e chiudono pannelli e guida.
+
+- **Web**: Playwright (`web/e2e/`, `npm run e2e`) apre la build di produzione in Chrome e fallisce anche se la pagina scrive un errore o un avviso nella console.
+- **Desktop**: JUnit con il robot di JavaFX (`InterfaceTest`) clicca e preme i tasti sulla finestra dell’app; gira sulla piattaforma headless di JavaFX, quindi non serve uno schermo.
+
+- **CI** (`.github/workflows/ci.yml`): a ogni push e pull request esegue tipi, lint, test, build e test dell’interfaccia del web e, su Linux e Windows, compilazione senza warning, PMD, test e test dell’interfaccia del desktop.
 - **Pubblicazione**: il sito viene pubblicato e le release desktop vengono create solo se gli stessi controlli passano.
 - **Dipendenze**: Dependabot (`.github/dependabot.yml`) propone ogni settimana gli aggiornamenti di npm, Maven e GitHub Actions, che passano dalla CI prima di poter essere uniti.
 
@@ -109,7 +115,7 @@ La ricerca è scritta due volte, in TypeScript e in Java, quindi le due edizioni
   - `Cherubini-macos-intel.zip` per Mac con processore Intel
   - `Cherubini-linux-x86_64.AppImage` per Linux
 
-  I pacchetti non sono firmati; le note di ogni release spiegano come superare l'avviso al primo avvio.
+  I pacchetti non sono firmati; le note di ogni release spiegano come superare l'avviso al primo avvio. Ogni release pubblica anche `SHA256SUMS.txt` con le impronte SHA-256 dei pacchetti, per verificare che il file scaricato sia integro.
 
 ## Autori
 

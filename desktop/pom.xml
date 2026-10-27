@@ -120,9 +120,8 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.6.1</version>
                     <configuration>
-                        <!-- The tested classes need no JavaFX, so the tests run on the plain classpath. -->
-                        <useModulePath>false</useModulePath>
-                        <argLine>--enable-native-access=ALL-UNNAMED</argLine>
+                        <!-- The interface tests run on the JavaFX headless platform, without a screen. -->
+                        <argLine>--enable-native-access=javafx.graphics,org.xerial.sqlitejdbc -Dglass.platform=Headless -Dprism.order=sw</argLine>
                     </configuration>
                 </plugin>
             </plugins>
