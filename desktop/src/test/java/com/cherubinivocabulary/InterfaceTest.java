@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  */
 class InterfaceTest {
     private static final long TIMEOUT_SECONDS = 5;
+    private static final long STILL_NANOS = TimeUnit.MILLISECONDS.toNanos(300);
     private static final String FERRO = "ferro";
 
     private Stage stage;
@@ -41,6 +42,10 @@ class InterfaceTest {
             stage = new Stage();
             stage.setScene(CherubiniApp.scene(new History(new MemoryPreferences()), null));
             stage.show();
+            // The headless screen is 1000 × 1000: the whole window must fit on it.
+            stage.setX(0);
+            stage.setY(0);
+            stage.setWidth(1000);
             robot = new Robot();
             return stage;
         });
@@ -145,18 +150,30 @@ class InterfaceTest {
         return onFx(() -> type.cast(stage.getScene().lookup("#" + id)));
     }
 
-    /** Clicks the centre of the target once it is shown and its entrance animation is over. */
+    /**
+     * Clicks the centre of the target once it is shown inside the window and its entrance
+     * animation is over: on a slow machine two checks in a row can fall between two frames,
+     * so the target must stay still for a real stretch of time.
+     */
     private void click(Node target) {
         var last = new AtomicReference<Bounds>();
+        var stillSince = new AtomicLong();
         waitUntil("the target is shown and stays still", () -> {
             Bounds bounds = target.localToScreen(target.getBoundsInLocal());
-            return shown(target) && bounds != null && bounds.equals(last.getAndSet(bounds));
+            if (!shown(target) || bounds == null || !insideTheWindow(bounds)) return false;
+            long now = System.nanoTime();
+            if (!bounds.equals(last.getAndSet(bounds))) stillSince.set(now);
+            return now - stillSince.get() >= STILL_NANOS;
         });
         run(() -> {
             Bounds bounds = target.localToScreen(target.getBoundsInLocal());
             robot.mouseMove(bounds.getCenterX(), bounds.getCenterY());
             robot.mouseClick(MouseButton.PRIMARY);
         });
+    }
+
+    private boolean insideTheWindow(Bounds bounds) {
+        return new BoundingBox(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight()).contains(bounds);
     }
 
     private static boolean shown(Node node) {
