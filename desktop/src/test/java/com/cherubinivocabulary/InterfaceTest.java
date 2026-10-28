@@ -1,10 +1,23 @@
 package com.cherubinivocabulary;
 
 import module java.base;
-import module javafx.controls;
+// Single-type imports rather than "import module javafx.controls": IntelliJ compiles the tests
+// on the classpath, where JavaFX is not a module.
 import atlantafx.base.controls.ModalPane;
+import javafx.application.Platform;
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextInputControl;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.Pane;
 import javafx.scene.robot.Robot;
+import javafx.stage.Stage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
