@@ -33,6 +33,16 @@ test("browses a letter", async ({ page }) => {
   await expect(reading(page).getByRole("heading", { name: "Jùre(De)" })).toBeVisible();
 });
 
+test("the arrows move between entries from anywhere on the page", async ({ page }) => {
+  await page.getByRole("button", { name: "A: 131 lemmi" }).click();
+  await expect(reading(page).getByRole("heading", { name: "Abàcch" })).toBeVisible();
+  await reading(page).getByRole("heading", { name: "Abàcch" }).click();
+  await page.keyboard.press("ArrowDown");
+  await expect(reading(page).getByRole("heading", { name: "Abachin" })).toBeVisible();
+  await page.keyboard.press("ArrowUp");
+  await expect(reading(page).getByRole("heading", { name: "Abàcch" })).toBeVisible();
+});
+
 test("F3 goes to the next occurrence and then to the next entry", async ({ page }) => {
   await search(page).fill("ferro");
   await expect(reading(page).getByRole("heading", { name: "Anèll" })).toBeVisible();

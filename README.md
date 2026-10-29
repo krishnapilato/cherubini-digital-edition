@@ -109,7 +109,7 @@ I test dell’interfaccia usano l’app vera come farebbe una persona: cercano s
 ## Pubblicazione
 
 - **Sito**: ogni push su `main` che tocca `web/`, `guide/`, `tests/` o `data/cherubini.json` ricostruisce il sito e lo pubblica su GitHub Pages.
-- **Desktop**: un tag `v*` (per esempio `v1.0.2`) costruisce i pacchetti portatili e crea la release su GitHub:
+- **Desktop**: un tag `v*` (per esempio `v1.2.2`) costruisce i pacchetti portatili e crea la release su GitHub:
   - `Cherubini-windows.zip` per Windows 10/11
   - `Cherubini-macos-apple-silicon.zip` per Mac con chip Apple
   - `Cherubini-macos-intel.zip` per Mac con processore Intel

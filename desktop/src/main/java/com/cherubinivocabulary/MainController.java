@@ -210,6 +210,22 @@ public final class MainController {
         root.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
             if (!(event.getTarget() instanceof Node target && insideTextField(target))) root.requestFocus();
         });
+        root.addEventFilter(KeyEvent.KEY_PRESSED, this::onArrowKey);
+    }
+
+    // As the hint under the entry says, the arrows move to the previous or next entry from
+    // anywhere; the list and the text fields keep their own handling.
+    private void onArrowKey(KeyEvent event) {
+        int step = switch (event.getCode()) {
+            case UP -> -1;
+            case DOWN -> 1;
+            default -> 0;
+        };
+        if (step == 0 || mode == Mode.LENTE || modal.isDisplay() || lemmaList.isFocused()) return;
+        Node focused = root.getScene().getFocusOwner();
+        if (focused != null && insideTextField(focused)) return;
+        event.consume();
+        select(lemmaList.getSelectionModel().getSelectedIndex() + step);
     }
 
     private static boolean insideTextField(Node node) {
@@ -427,7 +443,8 @@ public final class MainController {
     }
 
     private void remember() {
-        if (search.isEmpty()) return;
+        // The typed text rather than the last search: Enter can come before the search starts.
+        if (Search.Query.of(query.get(), !contained.get()).isEmpty()) return;
         history.remember(query.get());
         refreshRecent();
     }

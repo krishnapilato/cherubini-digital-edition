@@ -12,14 +12,19 @@ final class Help {
     private Help() {}
 
     static void open(HostServices host) {
+        host.showDocument(prepare().toUri().toString());
+    }
+
+    /** Copies the guide into the same temporary folder every time, so copies never pile up. */
+    static Path prepare() {
         try {
-            Path folder = Files.createTempDirectory("cherubini-guida");
+            Path folder = Files.createDirectories(Path.of(System.getProperty("java.io.tmpdir"), "cherubini-guida"));
             for (String file : FILES) {
                 try (InputStream source = Objects.requireNonNull(Help.class.getResourceAsStream(file), file)) {
-                    Files.copy(source, folder.resolve(Path.of(file).getFileName()));
+                    Files.copy(source, folder.resolve(Path.of(file).getFileName()), StandardCopyOption.REPLACE_EXISTING);
                 }
             }
-            host.showDocument(folder.resolve("index.html").toUri().toString());
+            return folder.resolve("index.html");
         } catch (IOException e) {
             throw new UncheckedIOException("Impossibile aprire la guida", e);
         }

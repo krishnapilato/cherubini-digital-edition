@@ -12,6 +12,7 @@ import { Reading } from "./components/Reading";
 import { ResultList } from "./components/ResultList";
 import { Toast } from "./components/Toast";
 import { TopBar } from "./components/TopBar";
+import { useArrowKeys } from "./hooks/useArrowKeys";
 import { useOccurrences } from "./hooks/useOccurrences";
 import { useResults, type Mode } from "./hooks/useResults";
 import { find } from "./search";
@@ -112,6 +113,7 @@ function Explorer({ vocabulary }: Readonly<{ vocabulary: Vocabulary }>) {
     const target = items[Math.min(items.length - 1, Math.max(0, position))];
     if (target) select(target.id);
   };
+  useArrowKeys(mode !== "lente" && panel === null, (step) => goTo(index + step));
 
   const selectAllFound = () => {
     addToPrint(items.map((lemma) => lemma.id));

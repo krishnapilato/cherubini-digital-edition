@@ -21,12 +21,7 @@ export function GuideDialog({ onClosed }: Readonly<{ onClosed: () => void }>) {
         <iframe
           src={GUIDE_URL}
           title="Guida all'uso"
-          // Keys pressed inside the guide stay in its own document, so Esc is forwarded by hand.
-          onLoad={(event) =>
-            event.currentTarget.contentWindow?.addEventListener("keydown", (key) => {
-              if (key.key === "Escape") close();
-            })
-          }
+          onLoad={(e) => e.currentTarget.contentWindow?.addEventListener("keydown", (key) => { if (key.key === "Escape") close() })}
         />
       )}
     </Modal>

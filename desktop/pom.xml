@@ -6,7 +6,7 @@
 
     <groupId>com.cherubinivocabulary</groupId>
     <artifactId>cherubini-vocabulary</artifactId>
-    <version>1.2.1</version>
+    <version>1.2.2</version>
     <name>cherubini-vocabulary</name>
 
     <properties>
@@ -60,7 +60,7 @@
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.53.4.0</version>
+            <version>3.54.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

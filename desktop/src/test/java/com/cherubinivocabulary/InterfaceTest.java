@@ -113,6 +113,26 @@ class InterfaceTest {
     }
 
     @Test
+    void theArrowsMoveBetweenEntriesFromAnywhere() {
+        search(FERRO);
+        click(onFx(() -> stage.getScene().lookup(".lemma-title")));
+        press(KeyCode.DOWN);
+        waitUntil("the next entry is open", () -> "Bocchètta".equals(lemmaList().getSelectionModel().getSelectedItem().lemma()));
+        press(KeyCode.UP);
+        waitUntil("the previous entry is open again", () -> "Anèll".equals(lemmaList().getSelectionModel().getSelectedItem().lemma()));
+    }
+
+    @Test
+    void enterRightAfterTypingStillSavesTheSearch() {
+        click(node("bigSearch"));
+        type(FERRO);
+        press(KeyCode.ENTER);
+        waitUntil("the search is saved among the recent ones", () -> node("recentPane").isVisible());
+        // The search itself starts a moment later: closing the window before it would leave it half done.
+        waitUntil("the results are shown", () -> lemmaList().getSelectionModel().getSelectedItem() != null);
+    }
+
+    @Test
     void escapeClearsTheSearchAndGoesBackToTheStartPage() {
         search(FERRO);
         press(KeyCode.ESCAPE);

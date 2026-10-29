@@ -25,7 +25,8 @@ export const ALL = "*";
 export const LETTERS: readonly string[] = [ALL, ...Array.from({ length: 26 }, (_, index) => String.fromCodePoint(65 + index))];
 
 const CACHE_KEY = "cherubini.vocabulary";
-const numbers = new Intl.NumberFormat("it-IT");
+// Italian formatting leaves 4-digit numbers ungrouped ("2307"); the desktop edition writes "2.307".
+const numbers = new Intl.NumberFormat("it-IT", { useGrouping: "always" });
 
 export const formatNumber = (value: number): string => numbers.format(value);
 

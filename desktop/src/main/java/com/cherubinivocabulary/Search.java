@@ -64,11 +64,8 @@ final class Search {
     private static List<Range> merge(List<Range> ranges) {
         List<Range> merged = new ArrayList<>();
         ranges.stream().sorted(Comparator.comparingInt(Range::start)).forEach(range -> {
-            if (!merged.isEmpty() && range.start() <= merged.getLast().end()) {
-                merged.set(merged.size() - 1, new Range(merged.getLast().start(), Math.max(merged.getLast().end(), range.end())));
-            } else {
-                merged.add(range);
-            }
+            if (!merged.isEmpty() && range.start() <= merged.getLast().end()) merged.set(merged.size() - 1, new Range(merged.getLast().start(), Math.max(merged.getLast().end(), range.end())));
+            else merged.add(range);
         });
         return merged;
     }

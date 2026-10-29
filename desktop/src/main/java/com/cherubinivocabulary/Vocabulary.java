@@ -12,10 +12,15 @@ final class Vocabulary {
 
     static List<Lemma> load() {
         try (InputStream bundled = Vocabulary.class.getResourceAsStream("/cherubini.db")) {
+            // SQLite needs a real file, but only while reading: the copy goes as soon as the
+            // entries are in memory, even if the app is later closed abruptly.
             Path copy = Files.createTempFile("cherubini", ".db");
-            copy.toFile().deleteOnExit();
-            Files.copy(Objects.requireNonNull(bundled, "cherubini.db"), copy, StandardCopyOption.REPLACE_EXISTING);
-            return read(copy);
+            try {
+                Files.copy(Objects.requireNonNull(bundled, "cherubini.db"), copy, StandardCopyOption.REPLACE_EXISTING);
+                return read(copy);
+            } finally {
+                Files.deleteIfExists(copy);
+            }
         } catch (IOException e) {
             throw new UncheckedIOException("Impossibile preparare il vocabolario", e);
         }
