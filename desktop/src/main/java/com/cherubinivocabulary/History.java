@@ -5,7 +5,7 @@ import module java.prefs;
 
 public final class History {
     private static final String KEY = "recentSearches";
-    private static final String SEPARATOR = "\u001E";
+    private static final String SEP = "\u001E";
     private static final int LIMIT = 6;
 
     private final Preferences preferences;
@@ -19,24 +19,21 @@ public final class History {
     }
 
     List<String> recent() {
-        String saved = preferences.get(KEY, "");
-        return saved.isEmpty() ? List.of() : List.of(saved.split(SEPARATOR));
+        var saved = preferences.get(KEY, "");
+        return saved.isEmpty() ? List.of() : List.of(saved.split(SEP));
     }
 
     void remember(String search) {
-        String cleaned = search.strip();
-        if (cleaned.isEmpty()) return;
-        List<String> updated = new ArrayList<>(List.of(cleaned));
-        recent().stream().filter(previous -> !previous.equals(cleaned)).limit(LIMIT - 1L).forEach(updated::add);
-        save(updated);
+        var cleaned = search.strip();
+        if (!cleaned.isEmpty()) save(Stream.concat(Stream.of(cleaned), recent().stream().filter(s -> !s.equals(cleaned))).limit(LIMIT).toList());
     }
 
     void forget(String search) {
-        save(recent().stream().filter(previous -> !previous.equals(search)).toList());
+        save(recent().stream().filter(s -> !s.equals(search)).toList());
     }
 
     private void save(List<String> searches) {
         if (searches.isEmpty()) preferences.remove(KEY);
-        else preferences.put(KEY, String.join(SEPARATOR, searches));
+        else preferences.put(KEY, String.join(SEP, searches));
     }
 }

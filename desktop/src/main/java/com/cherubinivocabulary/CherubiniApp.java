@@ -7,10 +7,8 @@ import atlantafx.base.theme.PrimerLight;
 import javafx.scene.control.Labeled;
 
 public class CherubiniApp extends Application {
-    /** Opens the window, checks that it shows the vocabulary and quits: see Launcher. */
     static final String SMOKE_TEST = "--smoke-test";
 
-    private static final List<String> FONT_WEIGHTS = List.of("Regular", "Medium", "SemiBold");
     private static final AtomicBoolean SMOKE_TEST_PASSED = new AtomicBoolean();
 
     @Override
@@ -29,14 +27,13 @@ public class CherubiniApp extends Application {
     }
 
     private static void finishTheSmokeTest(Stage stage) {
-        String status = stage.getScene().lookup("#statusLabel") instanceof Labeled label ? label.getText() : "";
+        var status = stage.getScene().lookup("#statusLabel") instanceof Labeled label ? label.getText() : "";
         SMOKE_TEST_PASSED.set(stage.isShowing() && status.endsWith(" voci · sola consultazione") && !status.startsWith("0 "));
         Platform.exit();
     }
 
-    /** The whole interface, shared with the interface tests. */
     static Scene scene(History history, HostServices host) throws IOException {
-        FONT_WEIGHTS.forEach(weight -> Font.loadFont(resource("fonts/IBMPlexSans-" + weight + ".ttf"), 14));
+        List.of("Regular", "Medium", "SemiBold").forEach(weight -> Font.loadFont(resource("fonts/IBMPlexSans-" + weight + ".ttf"), 14));
         setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
 
         var loader = new FXMLLoader(CherubiniApp.class.getResource("main-view.fxml"));

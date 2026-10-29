@@ -11,12 +11,10 @@ final class Vocabulary {
     private Vocabulary() {}
 
     static List<Lemma> load() {
-        try (InputStream bundled = Vocabulary.class.getResourceAsStream("/cherubini.db")) {
-            // SQLite needs a real file, but only while reading: the copy goes as soon as the
-            // entries are in memory, even if the app is later closed abruptly.
-            Path copy = Files.createTempFile("cherubini", ".db");
+        try (var in = Vocabulary.class.getResourceAsStream("/cherubini.db")) {
+            var copy = Files.createTempFile("cherubini", ".db");
             try {
-                Files.copy(Objects.requireNonNull(bundled, "cherubini.db"), copy, StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(Objects.requireNonNull(in, "cherubini.db"), copy, StandardCopyOption.REPLACE_EXISTING);
                 return read(copy);
             } finally {
                 Files.deleteIfExists(copy);
@@ -26,14 +24,15 @@ final class Vocabulary {
         }
     }
 
-    private static List<Lemma> read(Path database) {
+    private static List<Lemma> read(Path db) {
         var config = new SQLiteConfig();
         config.setReadOnly(true);
-        try (Connection connection = DriverManager.getConnection("jdbc:sqlite:" + database, config.toProperties());
-             Statement statement = connection.createStatement();
-             ResultSet rows = statement.executeQuery(QUERY)) {
-            List<Lemma> lemmas = new ArrayList<>();
-            while (rows.next()) lemmas.add(Lemma.of(rows.getLong("id"), rows.getString("lemma"), rows.getString("def2")));
+        try (var conn = DriverManager.getConnection("jdbc:sqlite:" + db, config.toProperties());
+             var stmt = conn.createStatement();
+             var rs = stmt.executeQuery(QUERY)) {
+
+            var lemmas = new ArrayList<Lemma>();
+            while (rs.next()) lemmas.add(Lemma.of(rs.getLong(1), rs.getString(2), rs.getString(3)));
             return List.copyOf(lemmas);
         } catch (SQLException e) {
             throw new IllegalStateException("Impossibile leggere il vocabolario", e);

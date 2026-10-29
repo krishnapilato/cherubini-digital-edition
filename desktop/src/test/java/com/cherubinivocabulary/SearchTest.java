@@ -73,7 +73,7 @@ class SearchTest {
 
     @Test
     void loadsEveryEntryInOrder() {
-        List<Long> ids = LEMMAS.stream().map(Lemma::id).toList();
+        var ids = LEMMAS.stream().map(Lemma::id).toList();
         assertEquals(2307, ids.size());
         assertEquals(ids.stream().sorted().toList(), ids);
     }

@@ -13,27 +13,26 @@ final class Printing {
 
     static String print(List<Lemma> lemmas, Window owner) {
         if (Printer.getAllPrinters().isEmpty()) return "Nessuna stampante disponibile: controlla che una stampante sia installata e che il servizio di stampa del sistema sia attivo.";
-        PrinterJob job = PrinterJob.createPrinterJob();
+        var job = PrinterJob.createPrinterJob();
         if (job == null) return "Nessuna stampante disponibile.";
         if (!job.showPrintDialog(owner)) return "Stampa annullata.";
-        PageLayout layout = job.getJobSettings().getPageLayout();
-        for (VBox page : pages(lemmas, layout.getPrintableWidth(), layout.getPrintableHeight())) {
+        var layout = job.getJobSettings().getPageLayout();
+        for (var page : pages(lemmas, layout.getPrintableWidth(), layout.getPrintableHeight())) {
             if (!job.printPage(layout, page)) {
                 job.cancelJob();
                 return "Stampa non riuscita.";
             }
         }
-        if (!job.endJob()) return "Stampa non riuscita.";
-        return "Stampa inviata: " + lemmas.size() + (lemmas.size() == 1 ? " voce." : " voci.");
+        return job.endJob() ? "Stampa inviata: " + lemmas.size() + (lemmas.size() == 1 ? " voce." : " voci.") : "Stampa non riuscita.";
     }
 
     private static List<VBox> pages(List<Lemma> lemmas, double width, double height) {
-        List<VBox> pages = new ArrayList<>();
-        VBox page = newPage(1, width);
-        double used = page.prefHeight(width);
-        for (Lemma lemma : lemmas) {
-            TextFlow entry = entry(lemma, width);
-            double needed = entry.prefHeight(width) + GAP;
+        var pages = new ArrayList<VBox>();
+        var page = newPage(1, width);
+        var used = page.prefHeight(width);
+        for (var lemma : lemmas) {
+            var entry = entry(lemma, width);
+            var needed = entry.prefHeight(width) + GAP;
             if (used + needed > height && page.getChildren().size() > 1) {
                 pages.add(page);
                 page = newPage(pages.size() + 1, width);

@@ -14,15 +14,15 @@ class TemporaryFilesTest {
 
     @Test
     void loadingTheVocabularyLeavesNoCopyBehind() throws IOException {
-        long before = databaseCopies();
+        var before = databaseCopies();
         assertEquals(2307, Vocabulary.load().size());
         assertEquals(before, databaseCopies());
     }
 
     @Test
     void theGuideReusesTheSameFolder() {
-        Path first = Help.prepare();
-        Path second = Help.prepare();
+        var first = Help.prepare();
+        var second = Help.prepare();
         assertEquals(first, second);
         assertTrue(Files.isRegularFile(second));
     }

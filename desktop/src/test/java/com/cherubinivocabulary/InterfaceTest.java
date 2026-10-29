@@ -192,14 +192,14 @@ class InterfaceTest {
         var last = new AtomicReference<Bounds>();
         var stillSince = new AtomicLong();
         waitUntil("the target is shown and stays still", () -> {
-            Bounds bounds = target.localToScreen(target.getBoundsInLocal());
+            var bounds = target.localToScreen(target.getBoundsInLocal());
             if (!shown(target) || bounds == null || !insideTheWindow(bounds)) return false;
-            long now = System.nanoTime();
+            var now = System.nanoTime();
             if (!bounds.equals(last.getAndSet(bounds))) stillSince.set(now);
             return now - stillSince.get() >= STILL_NANOS;
         });
         run(() -> {
-            Bounds bounds = target.localToScreen(target.getBoundsInLocal());
+            var bounds = target.localToScreen(target.getBoundsInLocal());
             robot.mouseMove(bounds.getCenterX(), bounds.getCenterY());
             robot.mouseClick(MouseButton.PRIMARY);
         });
@@ -210,7 +210,7 @@ class InterfaceTest {
     }
 
     private static boolean shown(Node node) {
-        for (Node current = node; current != null; current = current.getParent()) {
+        for (var current = node; current != null; current = current.getParent()) {
             if (!current.isVisible() || current.getOpacity() < 1) return false;
         }
         return true;
@@ -225,7 +225,7 @@ class InterfaceTest {
     }
 
     private static void waitUntil(String what, BooleanSupplier condition) {
-        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(TIMEOUT_SECONDS);
+        var deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(TIMEOUT_SECONDS);
         while (!onFx(condition::getAsBoolean)) {
             if (System.nanoTime() > deadline) fail("Not reached in time: " + what);
             LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(20));

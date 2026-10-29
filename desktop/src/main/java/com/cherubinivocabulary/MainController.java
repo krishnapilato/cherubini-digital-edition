@@ -216,20 +216,20 @@ public final class MainController {
     // As the hint under the entry says, the arrows move to the previous or next entry from
     // anywhere; the list and the text fields keep their own handling.
     private void onArrowKey(KeyEvent event) {
-        int step = switch (event.getCode()) {
+        var step = switch (event.getCode()) {
             case UP -> -1;
             case DOWN -> 1;
             default -> 0;
         };
         if (step == 0 || mode == Mode.LENTE || modal.isDisplay() || lemmaList.isFocused()) return;
-        Node focused = root.getScene().getFocusOwner();
+        var focused = root.getScene().getFocusOwner();
         if (focused != null && insideTextField(focused)) return;
         event.consume();
         select(lemmaList.getSelectionModel().getSelectedIndex() + step);
     }
 
     private static boolean insideTextField(Node node) {
-        for (Node current = node; current != null; current = current.getParent()) {
+        for (var current = node; current != null; current = current.getParent()) {
             if (current instanceof TextInputControl) return true;
         }
         return false;
@@ -237,7 +237,7 @@ public final class MainController {
 
     private void refresh() {
         search = Search.Query.of(query.get(), !contained.get());
-        Mode next = nextMode();
+        var next = nextMode();
         switchTo(next);
         if (next == Mode.ATLANTE) showLetter();
         else if (next == Mode.STRUMENTO) showSearch();
@@ -250,7 +250,7 @@ public final class MainController {
 
     private void switchTo(Mode next) {
         if (next == mode) return;
-        Mode before = mode;
+        var before = mode;
         mode = next;
         show(lente, next == Mode.LENTE);
         show(lenteActions, next == Mode.LENTE);
@@ -267,7 +267,7 @@ public final class MainController {
     }
 
     private void showLetter() {
-        List<Lemma> list = ALL.equals(letter) ? lemmas : lemmas.stream().filter(lemma -> lemma.initial().equals(letter)).toList();
+        var list = ALL.equals(letter) ? lemmas : lemmas.stream().filter(lemma -> lemma.initial().equals(letter)).toList();
         listTitle.setText(ALL.equals(letter) ? "Tutti i lemmi" : letter);
         listCount.setText(format(list.size()) + " lemmi");
         tiles.forEach((key, tile) -> tile.pseudoClassStateChanged(SELECTED, key.equals(letter)));
@@ -298,7 +298,7 @@ public final class MainController {
     }
 
     private void showList(List<Lemma> list) {
-        Lemma selected = lemmaList.getSelectionModel().getSelectedItem();
+        var selected = lemmaList.getSelectionModel().getSelectedItem();
         shown.setAll(list);
         if (!shown.isEmpty()) select(Math.max(0, shown.indexOf(selected)));
         showSelected();
@@ -307,9 +307,9 @@ public final class MainController {
     }
 
     private void showSelected() {
-        Lemma lemma = lemmaList.getSelectionModel().getSelectedItem();
-        int index = lemmaList.getSelectionModel().getSelectedIndex();
-        int total = shown.size();
+        var lemma = lemmaList.getSelectionModel().getSelectedItem();
+        var index = lemmaList.getSelectionModel().getSelectedIndex();
+        var total = shown.size();
         occurrence = NO_OCCURRENCE;
         positionPrefix.setText(mode == Mode.STRUMENTO ? "Voce" : "Lemma");
         positionField.setText(index >= 0 ? String.valueOf(index + 1) : "");
@@ -334,7 +334,7 @@ public final class MainController {
     }
 
     private void showDefinition(Lemma lemma) {
-        List<Search.Range> ranges = matchesIn(lemma.searchableDefinition());
+        var ranges = matchesIn(lemma.searchableDefinition());
         definition.replaceText(lemma.definition());
         if (!lemma.definition().isEmpty())
             definition.setStyleSpans(0, highlighted(lemma.definition().length(), ranges));
@@ -352,8 +352,7 @@ public final class MainController {
 
     private String occurrenceText(int count) {
         if (count == 0) return "Nessuna occorrenza";
-        if (occurrence < 0) return quantity(count, "occorrenza", "occorrenze");
-        return "Occorrenza " + (occurrence + 1) + " di " + count;
+        return occurrence < 0 ? quantity(count, "occorrenza", "occorrenze") : "Occorrenza " + (occurrence + 1) + " di " + count;
     }
 
     private static String quantity(long count, String one, String many) {
@@ -366,16 +365,16 @@ public final class MainController {
 
     @FXML
     private void nextOccurrence() {
-        Lemma lemma = lemmaList.getSelectionModel().getSelectedItem();
+        var lemma = lemmaList.getSelectionModel().getSelectedItem();
         if (lemma == null || mode != Mode.STRUMENTO) return;
-        int count = matchesIn(lemma.searchableDefinition()).size();
+        var count = matchesIn(lemma.searchableDefinition()).size();
         if (occurrence + 1 < count) {
             occurrence++;
             showDefinition(lemma);
             return;
         }
-        int index = lemmaList.getSelectionModel().getSelectedIndex();
-        OptionalInt following = IntStream.range(index + 1, shown.size())
+        var index = lemmaList.getSelectionModel().getSelectedIndex();
+        var following = IntStream.range(index + 1, shown.size())
                 .filter(candidate -> !matchesIn(shown.get(candidate).searchableDefinition()).isEmpty())
                 .findFirst();
         if (following.isEmpty()) return;
@@ -386,9 +385,9 @@ public final class MainController {
 
     @FXML
     private void previousOccurrence() {
-        Lemma lemma = lemmaList.getSelectionModel().getSelectedItem();
+        var lemma = lemmaList.getSelectionModel().getSelectedItem();
         if (lemma == null) return;
-        int count = matchesIn(lemma.searchableDefinition()).size();
+        var count = matchesIn(lemma.searchableDefinition()).size();
         if (count == 0) return;
         occurrence = occurrence <= 0 ? count - 1 : occurrence - 1;
         showDefinition(lemma);
@@ -415,7 +414,7 @@ public final class MainController {
     }
 
     private void jumpToTypedPosition() {
-        int position = typedPosition();
+        var position = typedPosition();
         if (position >= 1 && position <= shown.size()) select(position - 1);
         else showSelected();
     }
@@ -430,13 +429,13 @@ public final class MainController {
 
     private void select(int index) {
         if (shown.isEmpty()) return;
-        int target = Math.clamp(index, 0, shown.size() - 1);
+        var target = Math.clamp(index, 0, shown.size() - 1);
         lemmaList.getSelectionModel().clearAndSelect(target);
         lemmaList.scrollTo(Math.max(0, target - 2));
     }
 
     private void onSearchKey(KeyEvent event) {
-        KeyCode code = event.getCode();
+        var code = event.getCode();
         if (code == KeyCode.ENTER) remember();
         else if (code == KeyCode.ESCAPE) query.set("");
         else if (code == KeyCode.DOWN && mode != Mode.LENTE) lemmaList.requestFocus();
@@ -469,10 +468,10 @@ public final class MainController {
     }
 
     private void buildLetters() {
-        for (int i = 0; i < LETTERS.size(); i++) {
-            String key = LETTERS.get(i);
-            long count = ALL.equals(key) ? lemmas.size() : counts.getOrDefault(key, 0L);
-            String description = describeLetter(key, count);
+        for (var i = 0; i < LETTERS.size(); i++) {
+            var key = LETTERS.get(i);
+            var count = ALL.equals(key) ? lemmas.size() : counts.getOrDefault(key, 0L);
+            var description = describeLetter(key, count);
 
             var pill = new Button(key);
             pill.getStyleClass().add("pill");
@@ -509,7 +508,7 @@ public final class MainController {
     }
 
     private void refreshRecent() {
-        List<String> recent = history.recent();
+        var recent = history.recent();
         recentPane.getChildren().clear();
         show(recentPane, !recent.isEmpty());
         if (recent.isEmpty()) return;
@@ -550,7 +549,7 @@ public final class MainController {
 
     @FXML
     private void toggleSelectedToPrint() {
-        Lemma lemma = lemmaList.getSelectionModel().getSelectedItem();
+        var lemma = lemmaList.getSelectionModel().getSelectedItem();
         if (lemma != null) togglePrint(lemma);
     }
 
@@ -559,8 +558,8 @@ public final class MainController {
     }
 
     private void refreshPrint() {
-        int count = toPrint.size();
-        List<Lemma> chosen = lemmas.stream().filter(lemma -> toPrint.contains(lemma.id())).toList();
+        var count = toPrint.size();
+        var chosen = lemmas.stream().filter(lemma -> toPrint.contains(lemma.id())).toList();
         printList.getItems().setAll(chosen);
         printSubtitle.setText(count == 0 ? "Nessuna voce scelta" : quantity(count, "voce scelta", "voci scelte"));
         printNowButton.setText(count == 0 ? "Stampa" : "Stampa " + quantity(count, "voce", "voci"));
@@ -571,7 +570,7 @@ public final class MainController {
             badge.setText(String.valueOf(count));
             show(badge, count > 0);
         });
-        Lemma lemma = lemmaList.getSelectionModel().getSelectedItem();
+        var lemma = lemmaList.getSelectionModel().getSelectedItem();
         selectedToPrint.setSelected(lemma != null && toPrint.contains(lemma.id()));
         lemmaList.refresh();
     }
@@ -588,7 +587,7 @@ public final class MainController {
 
     @FXML
     private void print() {
-        List<Lemma> chosen = lemmas.stream().filter(lemma -> toPrint.contains(lemma.id())).toList();
+        var chosen = lemmas.stream().filter(lemma -> toPrint.contains(lemma.id())).toList();
         if (chosen.isEmpty()) return;
         closePanel();
         showToast(Printing.print(chosen, lemmaList.getScene().getWindow()));
@@ -616,7 +615,7 @@ public final class MainController {
     }
 
     private void showAbbreviationCategory() {
-        Object category = abbreviationCategories.getSelectedToggle().getUserData();
+        var category = abbreviationCategories.getSelectedToggle().getUserData();
         abbreviationsMessage.setText("Le abbreviazioni del Cherubini (" + category + ") compariranno qui con la loro spiegazione e la ricerca nel vocabolario.");
     }
 
@@ -634,9 +633,9 @@ public final class MainController {
     }
 
     private static List<Text> texts(String text, List<Search.Range> ranges) {
-        List<Text> parts = new ArrayList<>();
-        int cursor = 0;
-        for (Search.Range range : ranges) {
+        var parts = new ArrayList<Text>();
+        var cursor = 0;
+        for (var range : ranges) {
             if (range.start() > cursor) parts.add(new Text(text.substring(cursor, range.start())));
             var match = new Text(text.substring(range.start(), range.end()));
             match.getStyleClass().add("match");
@@ -649,9 +648,9 @@ public final class MainController {
 
     private StyleSpans<Collection<String>> highlighted(int length, List<Search.Range> ranges) {
         var spans = new StyleSpansBuilder<Collection<String>>();
-        int cursor = 0;
-        for (int i = 0; i < ranges.size(); i++) {
-            Search.Range range = ranges.get(i);
+        var cursor = 0;
+        for (var i = 0; i < ranges.size(); i++) {
+            var range = ranges.get(i);
             spans.add(List.of(), range.start() - cursor);
             spans.add(List.of(i == occurrence ? "hit-current" : "hit"), range.end() - range.start());
             cursor = range.end();
@@ -717,14 +716,14 @@ public final class MainController {
             show(printBox, mode == Mode.STRUMENTO);
             printBox.setSelected(toPrint.contains(lemma.id()));
             title.getChildren().setAll(texts(lemma.lemma(), matchesIn(lemma.searchableLemma())));
-            List<Search.Range> ranges = matchesIn(lemma.searchableDefinition());
-            int start = ranges.isEmpty() ? 0 : Math.max(0, ranges.getFirst().start() - 24);
-            int end = Math.min(lemma.definition().length(), start + SNIPPET_LENGTH);
-            List<Search.Range> visible = ranges.stream()
+            var ranges = matchesIn(lemma.searchableDefinition());
+            var start = ranges.isEmpty() ? 0 : Math.max(0, ranges.getFirst().start() - 24);
+            var end = Math.min(lemma.definition().length(), start + SNIPPET_LENGTH);
+            var visible = ranges.stream()
                     .filter(range -> range.start() >= start && range.end() <= end)
                     .map(range -> new Search.Range(range.start() - start, range.end() - start))
                     .toList();
-            List<Text> parts = new ArrayList<>(texts(lemma.definition().substring(start, end), visible));
+            var parts = new ArrayList<>(texts(lemma.definition().substring(start, end), visible));
             if (start > 0) parts.addFirst(new Text("…"));
             if (end < lemma.definition().length()) parts.add(new Text("…"));
             snippet.getChildren().setAll(parts);
