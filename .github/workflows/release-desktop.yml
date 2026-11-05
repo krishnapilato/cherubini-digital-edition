@@ -1,0 +1,108 @@
+name: Desktop release
+
+# The desktop edition is for Windows only (see docs/decisions/0002); every other system uses the web edition.
+on:
+  push:
+    tags: [ "v*" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: desktop
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "27"
+          cache: maven
+          cache-dependency-path: desktop/pom.xml
+
+      - name: Version
+        run: |
+          version=1.0.0
+          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then version="${GITHUB_REF_NAME#v}"; fi
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+          echo "ZIP=Vocabolario-Cherubini-$version.zip" >> "$GITHUB_ENV"
+
+      - name: Jar
+        run: ./mvnw -B -q package
+
+      - name: Java runtime
+        run: >
+          jlink
+          --add-modules java.base,java.desktop,java.logging,java.prefs,java.scripting,java.sql,java.xml,jdk.unsupported,jdk.localedata
+          --include-locales=it,en
+          --strip-debug --no-header-files --no-man-pages --compress=zip-9
+          --output target/runtime
+
+      - name: Portable app
+        run: |
+          mkdir -p target/app
+          cp target/cherubini.jar target/app/
+          jpackage --type app-image --name Cherubini --app-version "$VERSION" \
+            --vendor "Stefano Pilato e Khova Krishna Pilato" \
+            --input target/app --main-jar cherubini.jar \
+            --main-class com.cherubinivocabulary.Launcher \
+            --runtime-image target/runtime --icon packaging/cherubini.ico \
+            --java-options "--enable-native-access=ALL-UNNAMED" \
+            --dest target/dist
+
+      # Starts the portable app exactly as it is shipped: with --smoke-test it opens the window
+      # on the JavaFX headless platform, checks that it shows the vocabulary and quits; any
+      # failure, a missing native library included, stops the release.
+      - name: Startup check
+        timeout-minutes: 3
+        run: |
+          target/dist/Cherubini/Cherubini.exe --smoke-test
+          echo "Cherubini si avvia e mostra il vocabolario"
+
+      - name: Zip
+        shell: pwsh
+        run: Compress-Archive -Path target/dist/Cherubini -DestinationPath "target/$env:ZIP"
+
+      # The fingerprint lets anyone check that the downloaded file is exactly the one built here.
+      - name: Checksum
+        working-directory: desktop/target
+        run: |
+          sha256sum "$ZIP" > SHA256SUMS.txt
+          du -sh dist/Cherubini "$ZIP"
+          { echo "CHECKSUM<<EOF"; cat SHA256SUMS.txt; echo "EOF"; } >> "$GITHUB_ENV"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: cherubini-windows
+          path: |
+            desktop/target/${{ env.ZIP }}
+            desktop/target/SHA256SUMS.txt
+
+      - uses: softprops/action-gh-release@v3
+        if: github.ref_type == 'tag'
+        with:
+          files: |
+            desktop/target/${{ env.ZIP }}
+            desktop/target/SHA256SUMS.txt
+          body: |
+            Le voci tecniche del *Vocabolario milanese–italiano*, da consultare anche senza internet e con Java incluso.
+
+            Scarica `${{ env.ZIP }}`, estrai lo zip e apri **Cherubini**. Funziona su Windows 11.
+
+            Su Mac o Linux usa la [versione web](https://krishnapilato.github.io/cherubini-digital-edition/).
+
+            L'app non è firmata digitalmente, quindi al primo avvio Windows chiede conferma: *Ulteriori informazioni* → *Esegui comunque*.
+
+            Se l'impronta del file scaricato coincide con questa, il file è integro (in PowerShell: `Get-FileHash ${{ env.ZIP }}`).
+
+            ```
+            ${{ env.CHECKSUM }}
+            ```
+
+            <sub>A cura di Stefano Pilato e Khova Krishna Pilato</sub>
