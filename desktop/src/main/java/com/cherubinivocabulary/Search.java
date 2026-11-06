@@ -4,6 +4,8 @@ import module java.base;
 
 final class Search {
     static final int MAX_WORDS = 4;
+    // Four common words (up to 12 letters) or a whole pasted lemma (up to 50 characters) fit: the limit only stops huge pastes.
+    static final int MAX_LENGTH = 60;
     // Any Unicode space separates words, non-breaking ones included, as in the web edition.
     private static final Pattern SPACES = Pattern.compile("(?U)\\s+");
 

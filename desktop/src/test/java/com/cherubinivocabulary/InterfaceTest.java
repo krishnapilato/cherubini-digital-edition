@@ -1,6 +1,7 @@
 package com.cherubinivocabulary;
 
 import module java.base;
+import module java.logging;
 // Single-type imports rather than "import module javafx.controls": IntelliJ compiles the tests
 // on the classpath, where JavaFX is not a module.
 import atlantafx.base.controls.ModalPane;
@@ -13,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.skin.VirtualFlow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
@@ -38,6 +40,7 @@ class InterfaceTest {
     private static final String ANELL = "Anèll";
     private static final String LENTE = "lente";
     private static final String BIG_SEARCH = "bigSearch";
+    private static final String BAR_SEARCH = "barSearch";
     private static final String RECENT_PANE = "recentPane";
 
     private Stage stage;
@@ -142,6 +145,19 @@ class InterfaceTest {
     }
 
     @Test
+    void shiftF3GoesBackToThePreviousOccurrence() {
+        search(FERRO);
+        run(() -> {
+            robot.keyPress(KeyCode.SHIFT);
+            robot.keyType(KeyCode.F3);
+            robot.keyRelease(KeyCode.SHIFT);
+        });
+        // From no current occurrence, going back wraps around to the last one, the only one here.
+        waitUntil("the occurrence is current", () -> "Occorrenza 1 di 1".equals(node("occurrenceLabel", Label.class).getText()));
+        assertEquals(ANELL, selectedLemma());
+    }
+
+    @Test
     void theArrowsMoveBetweenEntriesFromAnywhere() {
         search(FERRO);
         click(onFx(() -> stage.getScene().lookup(".lemma-title")));
@@ -210,7 +226,7 @@ class InterfaceTest {
     void changingSearchesAndBrowsingKeepsTheInterfaceResponsive() {
         search("a");
         for (var term : List.of("l", "ll", "ferro", "zzzzzzzz", "a", "", "tel", "ferro")) {
-            run(() -> node("barSearch", TextInputControl.class).setText(term));
+            run(() -> node(BAR_SEARCH, TextInputControl.class).setText(term));
             waitUntil("the results reflect the new query", () -> term.isEmpty()
                     ? node(LENTE).isVisible()
                     : node("searchSummary", Label.class).getText().startsWith("«" + term + "»"));
@@ -220,6 +236,69 @@ class InterfaceTest {
             }
         }
         assertEquals(ANELL, selectedLemma());
+    }
+
+    @Test
+    void theSearchStopsAtItsMaximumLengthWithoutComplaining() {
+        var pasted = "ferro ".repeat(30);
+        click(node(BIG_SEARCH));
+        // The same path as pasting.
+        run(() -> node(BIG_SEARCH, TextInputControl.class).replaceSelection(pasted));
+        waitUntil("the bar search has the focus", () -> node(BAR_SEARCH).isFocused());
+        type("x");
+        assertEquals(pasted.substring(0, Search.MAX_LENGTH), onFx(() -> node(BAR_SEARCH, TextInputControl.class).getText()));
+    }
+
+    @Test
+    void aNewSearchStartsFromItsFirstResult() {
+        search("l");
+        // An entry deep in the list that the next search finds too.
+        run(() -> {
+            var list = lemmaList();
+            var deep = IntStream.range(40, list.getItems().size())
+                    .filter(index -> list.getItems().get(index).searchableDefinition().contains("ll"))
+                    .findFirst().orElseThrow();
+            list.getSelectionModel().clearAndSelect(deep);
+        });
+        run(() -> node(BAR_SEARCH, TextInputControl.class).setText("ll"));
+        waitUntil("the results reflect the new query", () -> node("searchSummary", Label.class).getText().startsWith("«ll»"));
+        assertEquals(0, onFx(() -> lemmaList().getSelectionModel().getSelectedIndex()));
+    }
+
+    @Test
+    void scrollingQuicklyThroughTheResultsKeepsTheCellSizesConsistent() {
+        var warnings = new ArrayList<String>();
+        var handler = new Handler() {
+            @Override
+            public void publish(LogRecord logRecord) {
+                warnings.add(logRecord.getMessage());
+            }
+
+            @Override
+            public void flush() { }
+
+            @Override
+            public void close() { }
+        };
+        var controls = Logger.getLogger("javafx.scene.control");
+        controls.addHandler(handler);
+        try {
+            search("a");
+            var flow = onFx(() -> (VirtualFlow<?>) lemmaList().lookup(".virtual-flow"));
+            for (var round = 0; round < 10; round++) {
+                for (var step = 0; step < 30; step++) run(() -> {
+                    flow.scrollPixels(1500);
+                    lemmaList().layout();
+                });
+                for (var step = 0; step < 30; step++) run(() -> {
+                    flow.scrollPixels(-1500);
+                    lemmaList().layout();
+                });
+            }
+        } finally {
+            controls.removeHandler(handler);
+        }
+        assertEquals(List.of(), warnings);
     }
 
     private void search(String text) {

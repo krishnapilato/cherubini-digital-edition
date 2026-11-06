@@ -2,7 +2,8 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { Clock, Search, X } from "lucide-react";
 import { useRef, type KeyboardEvent, type RefObject } from "react";
-import { useSession } from "../store";
+import { MAX_QUERY_LENGTH } from "../search";
+import { useRecent, useSession } from "../store";
 import { describeLetter, LETTERS } from "../vocabulary";
 import { Switch } from "./Switch";
 
@@ -16,13 +17,21 @@ export function Lente({ onKeyDown, inputRef, countOf }: Props) {
   const scope = useRef<HTMLElement>(null);
   const query = useSession((state) => state.query);
   const contained = useSession((state) => state.contained);
-  const recent = useSession((state) => state.recent);
-  const { setQuery, setContained, remember, forget, openLetter } = useSession.getState();
+  const recent = useRecent((state) => state.recent);
+  const { setQuery, setContained, openLetter } = useSession.getState();
+  const { remember, forget } = useRecent.getState();
 
   const { contextSafe } = useGSAP(
     () => {
       gsap.from(".lente-item", { y: 18, opacity: 0, duration: 0.7, stagger: 0.07, ease: "power3.out" });
-      gsap.from(".pill", { scale: 0.85, opacity: 0, duration: 0.4, stagger: 0.012, delay: 0.35, ease: "back.out(2)" });
+      gsap.from(".pill", {
+        scale: 0.85,
+        opacity: 0,
+        duration: 0.45,
+        stagger: 0.012,
+        delay: 0.35,
+        ease: "back.out(1.4)",
+      });
     },
     { scope },
   );
@@ -53,6 +62,7 @@ export function Lente({ onKeyDown, inputRef, countOf }: Props) {
           type="search"
           aria-label="Cerca nel vocabolario"
           placeholder="Cerca una parola"
+          maxLength={MAX_QUERY_LENGTH}
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           onKeyDown={onKeyDown}

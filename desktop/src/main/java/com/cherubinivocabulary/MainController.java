@@ -20,7 +20,16 @@ public final class MainController {
     private static final String SECONDARY = "secondary";
     private static final List<String> LETTERS = Stream.concat(Stream.of(ALL), "ABCDEFGHIJKLMNOPQRSTUVWXYZ".chars().mapToObj(Character::toString)).toList();
     private static final PseudoClass SELECTED = PseudoClass.getPseudoClass("selected");
-    private static final int SNIPPET_LENGTH = 110;
+    // Every row of the list has the same height, so the list places its rows exactly however fast
+    // it scrolls: the lemma takes one line, the excerpt two, cut with an ellipsis. The fonts and
+    // the cell padding mirror app.css.
+    private static final Font LEMMA_FONT = Font.font("IBM Plex Sans SmBld", 15);
+    private static final Font SNIPPET_FONT = Font.font("IBM Plex Sans", 13);
+    private static final Font SNIPPET_MATCH_FONT = Font.font("IBM Plex Sans SmBld", 13);
+    private static final int SNIPPET_LINES = 2;
+    private static final double CELL_PADDING = 18;
+    private static final double ROW_SPACING = 2;
+    private static final double TEXT_INSET = 100;
     private static final int NO_OCCURRENCE = -1;
 
     private enum Mode {LENTE, ATLANTE, STRUMENTO}
@@ -36,6 +45,9 @@ public final class MainController {
     private final PauseTransition typingPause = new PauseTransition(Duration.millis(120));
     private final StyleClassedTextArea definition = new StyleClassedTextArea();
     private final Map<String, Button> tiles = new HashMap<>();
+    private final TextFlow measure = new TextFlow();
+    private double lemmaLine;
+    private double snippetLine;
     private Mode mode;
     private boolean browsing;
     private String letter = ALL;
@@ -167,6 +179,8 @@ public final class MainController {
         contained.addListener((_, _, _) -> refresh());
         bigSearch.setOnKeyPressed(this::onSearchKey);
         barSearch.setOnKeyPressed(this::onSearchKey);
+        bigSearch.setTextFormatter(new TextFormatter<>(MainController::withinMaxLength));
+        barSearch.setTextFormatter(new TextFormatter<>(MainController::withinMaxLength));
         clearButton.visibleProperty().bind(query.isNotEmpty());
 
         definition.setEditable(false);
@@ -178,11 +192,16 @@ public final class MainController {
         definitionHolder.getChildren().add(new VirtualizedScrollPane<>(definition));
 
         lemmaList.setItems(shown);
+        lemmaLine = lineHeight(LEMMA_FONT);
+        snippetLine = lineHeight(SNIPPET_FONT);
+        lemmaList.setFixedCellSize(CELL_PADDING + lemmaLine + ROW_SPACING + SNIPPET_LINES * snippetLine);
         lemmaList.setCellFactory(_ -> new LemmaCell());
+        // The excerpts are cut to the width of the list.
+        lemmaList.widthProperty().addListener((_, _, _) -> lemmaList.refresh());
         lemmaList.getSelectionModel().selectedItemProperty().addListener((_, _, _) -> showSelected());
         resultTabs.selectedToggleProperty().addListener((_, before, now) -> {
             if (now == null) resultTabs.selectToggle(before);
-            else showResults();
+            else showResults(true);
         });
         positionField.setOnAction(_ -> jumpToTypedPosition());
 
@@ -193,7 +212,9 @@ public final class MainController {
         modal.usePredefinedTransitionFactories(Side.RIGHT);
 
         lemmaList.sceneProperty().addListener((_, _, scene) -> {
-            if (scene != null) scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F3), this::nextOccurrence);
+            if (scene == null) return;
+            scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F3), this::nextOccurrence);
+            scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F3, KeyCombination.SHIFT_DOWN), this::previousOccurrence);
         });
         statusLabel.setText(format(lemmas.size()) + " voci · sola consultazione");
         buildLetters();
@@ -222,6 +243,14 @@ public final class MainController {
         if (focused != null && insideTextField(focused)) return;
         event.consume();
         select(lemmaList.getSelectionModel().getSelectedIndex() + step);
+    }
+
+    // As maxlength on the web: what goes past the limit is left out, without a message.
+    private static TextFormatter.Change withinMaxLength(TextFormatter.Change change) {
+        var excess = change.getControlNewText().length() - Search.MAX_LENGTH;
+        var text = change.getText();
+        if (excess > 0) change.setText(text.substring(0, Math.max(0, text.length() - excess)));
+        return change;
     }
 
     private static boolean insideTextField(Node node) {
@@ -269,7 +298,7 @@ public final class MainController {
         listCount.setText(quantity(list.size(), "lemma", "lemmi"));
         tiles.forEach((key, tile) -> tile.pseudoClassStateChanged(SELECTED, key.equals(letter)));
         lemmaList.setPlaceholder(wrapped("Nessun lemma per questa lettera."));
-        showList(list);
+        showList(list, false);
     }
 
     private void showSearch() {
@@ -287,7 +316,7 @@ public final class MainController {
             resultTabs.selectToggle(definitionsTab);
         if (definitionsTab.isSelected() && inDefinitions.isEmpty() && !inLemmas.isEmpty())
             resultTabs.selectToggle(lemmasTab);
-        showResults();
+        showResults(false);
     }
 
     private Node containedOffer() {
@@ -300,14 +329,16 @@ public final class MainController {
         return offer;
     }
 
-    private void showResults() {
-        if (mode == Mode.STRUMENTO) showList(lemmasTab.isSelected() ? inLemmas : inDefinitions);
+    private void showResults(boolean keepSelected) {
+        if (mode == Mode.STRUMENTO) showList(lemmasTab.isSelected() ? inLemmas : inDefinitions, keepSelected);
     }
 
-    private void showList(List<Lemma> list) {
+    // A new search or letter starts from its first entry; switching between lemmas and
+    // definitions keeps the open entry when the other tab has it too.
+    private void showList(List<Lemma> list, boolean keepSelected) {
         var selected = lemmaList.getSelectionModel().getSelectedItem();
         shown.setAll(list);
-        if (!shown.isEmpty()) select(Math.max(0, shown.indexOf(selected)));
+        if (!shown.isEmpty()) select(keepSelected ? Math.max(0, shown.indexOf(selected)) : 0);
         showSelected();
         lemmaList.refresh();
         refreshPrint();
@@ -645,6 +676,45 @@ public final class MainController {
         return parts;
     }
 
+    private double lineHeight(Font font) {
+        var line = new Text("X");
+        line.setFont(font);
+        measure.getChildren().setAll(line);
+        return measure.prefHeight(-1);
+    }
+
+    // The longest stretch of text from start that fits in the given height of a list row.
+    private List<Text> excerpt(String text, List<Search.Range> ranges, int start, double height, Font font, Font matchFont) {
+        var width = Math.max(1, lemmaList.getWidth() - TEXT_INSET);
+        // No glyph is narrower than about a quarter of the font size: longer stretches never fit.
+        var limit = Math.min(text.length(), start + (int) (height * width / (font.getSize() * font.getSize() / 4)));
+        var fitting = start;
+        var beyond = limit + 1;
+        while (beyond - fitting > 1) {
+            var middle = (fitting + beyond) >>> 1;
+            if (fits(window(text, ranges, start, middle), height, font, matchFont, width)) fitting = middle;
+            else beyond = middle;
+        }
+        return window(text, ranges, start, fitting);
+    }
+
+    private boolean fits(List<Text> parts, double height, Font font, Font matchFont, double width) {
+        parts.forEach(part -> part.setFont(part.getStyleClass().contains("match") ? matchFont : font));
+        measure.getChildren().setAll(parts);
+        return measure.prefHeight(width) <= height + 0.5;
+    }
+
+    private static List<Text> window(String text, List<Search.Range> ranges, int start, int end) {
+        var visible = ranges.stream()
+                .filter(range -> range.start() < end && range.end() > start)
+                .map(range -> new Search.Range(Math.max(range.start(), start) - start, Math.min(range.end(), end) - start))
+                .toList();
+        var parts = new ArrayList<>(texts(text.substring(start, end), visible));
+        if (start > 0) parts.addFirst(new Text("…"));
+        if (end < text.length()) parts.add(new Text("…"));
+        return parts;
+    }
+
     private StyleSpans<Collection<String>> highlighted(int length, List<Search.Range> ranges) {
         var spans = new StyleSpansBuilder<Collection<String>>();
         var cursor = 0;
@@ -698,11 +768,11 @@ public final class MainController {
         LemmaCell() {
             title.getStyleClass().add("list-lemma");
             snippet.getStyleClass().add("list-snippet");
-            title.prefWidthProperty().bind(lemmaList.widthProperty().subtract(100));
-            snippet.prefWidthProperty().bind(lemmaList.widthProperty().subtract(100));
+            title.prefWidthProperty().bind(lemmaList.widthProperty().subtract(TEXT_INSET));
+            snippet.prefWidthProperty().bind(lemmaList.widthProperty().subtract(TEXT_INSET));
             printBox.setOnAction(_ -> togglePrint(getItem()));
             printBox.setTooltip(new Tooltip("Da stampare"));
-            content = new HBox(10, printBox, new VBox(2, title, snippet));
+            content = new HBox(10, printBox, new VBox(ROW_SPACING, title, snippet));
         }
 
         @Override
@@ -714,18 +784,12 @@ public final class MainController {
             }
             show(printBox, mode == Mode.STRUMENTO);
             printBox.setSelected(toPrint.contains(lemma.id()));
-            title.getChildren().setAll(texts(lemma.lemma(), matchesIn(lemma.searchableLemma())));
+            title.getChildren().setAll(excerpt(lemma.lemma(), matchesIn(lemma.searchableLemma()), 0, lemmaLine, LEMMA_FONT, LEMMA_FONT));
             var ranges = matchesIn(lemma.searchableDefinition());
             var start = ranges.isEmpty() ? 0 : Math.max(0, ranges.getFirst().start() - 24);
-            var end = Math.min(lemma.definition().length(), start + SNIPPET_LENGTH);
-            var visible = ranges.stream()
-                    .filter(range -> range.start() >= start && range.end() <= end)
-                    .map(range -> new Search.Range(range.start() - start, range.end() - start))
-                    .toList();
-            var parts = new ArrayList<>(texts(lemma.definition().substring(start, end), visible));
-            if (start > 0) parts.addFirst(new Text("…"));
-            if (end < lemma.definition().length()) parts.add(new Text("…"));
-            snippet.getChildren().setAll(parts);
+            // A line break would push the excerpt past its two lines; a space keeps the matches in place.
+            var oneLine = lemma.definition().replace('\n', ' ').replace('\r', ' ');
+            snippet.getChildren().setAll(excerpt(oneLine, ranges, start, SNIPPET_LINES * snippetLine, SNIPPET_FONT, SNIPPET_MATCH_FONT));
             setGraphic(content);
         }
     }

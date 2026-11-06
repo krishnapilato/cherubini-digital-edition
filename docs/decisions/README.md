@@ -8,7 +8,7 @@ Why the project is built the way it is. Each file records one decision: the situ
 | [0002](0002-portable-unsigned-desktop-packages.md) | A portable, unsigned desktop package for Windows only | Accepted |
 | [0003](0003-research-instrument-interface.md) | A "research instrument" interface | Accepted |
 | [0004](0004-search-written-twice-with-shared-cases.md) | Search written twice, with shared cases | Accepted |
-| [0005](0005-data-and-storage.md) | One JSON source, no data leaves the device | Accepted |
+| [0005](0005-data-and-storage.md) | One JSON source, no data leaves the device | Accepted, amended by 0017 |
 | [0006](0006-guide-delivery.md) | One guide, opened differently per edition | Accepted |
 | [0007](0007-warnings-fail-the-build.md) | Warnings fail the build | Accepted |
 | [0008](0008-tests-and-release-gates.md) | Real-app tests and release gates | Accepted |
@@ -20,3 +20,4 @@ Why the project is built the way it is. Each file records one decision: the situ
 | [0014](0014-remove-volume-viewer.md) | Remove the volume viewer | Accepted |
 | [0015](0015-content-security-policy.md) | Content Security Policy on the web edition | Accepted |
 | [0016](0016-pinned-build-tools.md) | Pinned build tools | Accepted |
+| [0017](0017-recent-searches-persist-on-the-web.md) | Recent searches persist on the web | Accepted |

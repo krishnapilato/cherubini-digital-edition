@@ -96,7 +96,7 @@ The app opens at <http://localhost:5173/cherubini-digital-edition/> and the guid
 Some technical choices:
 
 - The data isn't in the JavaScript. The JSON is downloaded alongside the app (with a `preload`) and kept in `sessionStorage`.
-- The browsing state is in `sessionStorage` too, through Zustand: search, letter, open entry, entries to print and recent searches. Reloading the page keeps your place; closing the tab makes the browser erase it all. No data leaves the browser.
+- The browsing state is in `sessionStorage` too, through Zustand: search, letter, open entry and entries to print. Reloading the page keeps your place; closing the tab makes the browser erase it. Recent searches are in `localStorage`, so they are still there at the next visit, as on the desktop (see [decision 0017](docs/decisions/0017-recent-searches-persist-on-the-web.md)). No data leaves the browser.
 - The results list is virtualized with TanStack Virtual: even with 2,307 entries the page only holds the visible rows.
 - The browser's Back button goes from the entry to the list (on phones) and from the list to the home page. On phones the entry fills the screen and you can also swipe sideways to change it.
 - The panels and the guide are native `<dialog>` elements: the browser handles focus, the Esc key and returning focus.

@@ -25,6 +25,12 @@ test("searches the definitions while typing", async ({ page }) => {
   await expect(reading(page).getByRole("heading", { name: "Anèll" })).toBeVisible();
 });
 
+test("the search stops at its maximum length without complaining", async ({ page }) => {
+  await search(page).focus();
+  await page.keyboard.insertText("ferro ".repeat(30));
+  await expect(search(page)).toHaveValue("ferro ".repeat(30).slice(0, 60));
+});
+
 test("parts of a word already find results while typing", async ({ page }) => {
   await search(page).fill("tel");
   await expect(reading(page).getByRole("heading")).toBeVisible();
@@ -127,6 +133,18 @@ test("Enter saves a recent search, which can be removed one by one", async ({ pa
   await expect(recent.getByRole("button", { name: "ferro", exact: true })).toBeVisible();
   await recent.getByRole("button", { name: "Togli «ferro» dalle recenti" }).click();
   await expect(recent).toBeHidden();
+});
+
+test("recent searches are still there in a new tab", async ({ page, context }) => {
+  await search(page).fill("ferro");
+  await search(page).press("Enter");
+
+  const tab = await context.newPage();
+  await tab.goto("./");
+  await expect(search(tab)).toHaveValue("");
+  await expect(
+    tab.getByRole("group", { name: "Ricerche recenti" }).getByRole("button", { name: "ferro", exact: true }),
+  ).toBeVisible();
 });
 
 test("the print panel and the guide open and close with Esc", async ({ page }) => {

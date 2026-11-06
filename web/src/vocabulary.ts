@@ -60,7 +60,7 @@ function store(text: string): boolean {
 
 async function download(): Promise<string> {
   const response = await fetch(dataUrl);
-  if (!response.ok) throw new Error(`Vocabolario non disponibile (${response.status})`);
+  if (!response.ok) throw new Error(`Vocabulary unavailable (HTTP ${response.status}).`);
   const text = await response.text();
   store(text);
   return text;

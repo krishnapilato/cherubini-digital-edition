@@ -21,7 +21,7 @@ void main(String[] args) throws IOException, SQLException {
                 SELECT value ->> 'id', value ->> 'lemma', value ->> 'lemmaNo', value ->> 'definizioneNo', value ->> 'def2'
                 FROM json_each(?)""")) {
             insert.setString(1, Files.readString(json));
-            if (insert.executeUpdate() == 0) throw new IllegalStateException("Nessuna voce in " + json);
+            if (insert.executeUpdate() == 0) throw new IllegalStateException("No entries in " + json + ".");
         }
         statement.execute("VACUUM");
     }

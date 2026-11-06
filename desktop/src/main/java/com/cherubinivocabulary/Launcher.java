@@ -4,9 +4,9 @@ import module java.base;
 import module java.logging;
 import javafx.application.Application;
 
-public class Launcher {
+class Launcher {
 
-    static void main(String[] args) {
+    void main(String[] args) {
         Logger.getLogger("javafx").setLevel(Level.SEVERE);
 
         var smokeTest = List.of(args).contains(CherubiniApp.SMOKE_TEST);
@@ -14,6 +14,6 @@ public class Launcher {
 
         Application.launch(CherubiniApp.class, args);
 
-        if (smokeTest && !CherubiniApp.passedTheSmokeTest()) throw new IllegalStateException("La finestra non mostra il vocabolario");
+        if (smokeTest && !CherubiniApp.passedTheSmokeTest()) throw new AssertionError("Window failed to display the vocabulary view.");
     }
 }

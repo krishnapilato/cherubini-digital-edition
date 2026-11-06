@@ -1,5 +1,6 @@
 import { Search, X } from "lucide-react";
 import type { KeyboardEvent, ReactNode, RefObject } from "react";
+import { MAX_QUERY_LENGTH } from "../search";
 import { useSession } from "../store";
 import { Switch } from "./Switch";
 
@@ -28,6 +29,7 @@ export function TopBar({ onKeyDown, inputRef, onHome, children }: Props) {
           type="search"
           aria-label="Cerca nel vocabolario"
           placeholder="Cerca una parola"
+          maxLength={MAX_QUERY_LENGTH}
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           onKeyDown={onKeyDown}

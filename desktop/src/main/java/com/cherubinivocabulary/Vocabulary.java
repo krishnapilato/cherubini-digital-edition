@@ -20,7 +20,7 @@ final class Vocabulary {
                 Files.deleteIfExists(copy);
             }
         } catch (IOException e) {
-            throw new UncheckedIOException("Impossibile preparare il vocabolario", e);
+            throw new UncheckedIOException("Failed to prepare the vocabulary database.", e);
         }
     }
 
@@ -35,7 +35,7 @@ final class Vocabulary {
             while (rs.next()) lemmas.add(Lemma.of(rs.getLong(1), rs.getString(2), rs.getString(3)));
             return List.copyOf(lemmas);
         } catch (SQLException e) {
-            throw new IllegalStateException("Impossibile leggere il vocabolario", e);
+            throw new IllegalStateException("Failed to read the vocabulary database.", e);
         }
     }
 }

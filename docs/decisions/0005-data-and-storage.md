@@ -1,6 +1,6 @@
 # 0005. One JSON source, no data leaves the device
 
-**Status:** Accepted
+**Status:** Accepted; recent searches on the web changed by [0017](0017-recent-searches-persist-on-the-web.md)
 
 ## Context
 

@@ -22,7 +22,7 @@ final class Help {
             }
             return dir.resolve("index.html");
         } catch (IOException e) {
-            throw new UncheckedIOException("Impossibile aprire la guida", e);
+            throw new UncheckedIOException("Failed to prepare the guide.", e);
         }
     }
 }

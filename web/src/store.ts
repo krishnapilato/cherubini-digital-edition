@@ -12,7 +12,6 @@ interface Session {
   readonly tab: Tab;
   readonly selectedId: number | null;
   readonly toPrint: readonly number[];
-  readonly recent: readonly string[];
 }
 
 interface Actions {
@@ -25,8 +24,6 @@ interface Actions {
   togglePrint: (id: number) => void;
   addToPrint: (ids: readonly number[]) => void;
   clearPrint: () => void;
-  remember: (search: string) => void;
-  forget: (search: string) => void;
 }
 
 const initial: Session = {
@@ -36,17 +33,17 @@ const initial: Session = {
   tab: "definizioni",
   selectedId: null,
   toPrint: [],
-  recent: [],
 };
 
-// Everything the reader is doing lives in sessionStorage: a reload keeps the same view,
-// closing the tab forgets it.
+// What the reader is doing lives in sessionStorage: a reload keeps the same view,
+// closing the tab forgets it. Recent searches are kept apart, see useRecent.
 export const useSession = create<Session & Actions>()(
   persist(
     (set) => ({
       ...initial,
-      setQuery: (query) => set({ query }),
-      setContained: (contained) => set({ contained }),
+      // A new search starts from its first entry, as on the desktop; switching tab keeps the open one.
+      setQuery: (query) => set({ query, selectedId: null }),
+      setContained: (contained) => set({ contained, selectedId: null }),
       openLetter: (letter) => set({ letter, query: "", selectedId: null }),
       goHome: () => set({ letter: null, query: "" }),
       setTab: (tab) => set({ tab }),
@@ -57,6 +54,37 @@ export const useSession = create<Session & Actions>()(
         })),
       addToPrint: (ids) => set(({ toPrint }) => ({ toPrint: [...new Set([...toPrint, ...ids])] })),
       clearPrint: () => set({ toPrint: [] }),
+    }),
+    {
+      name: "cherubini.session",
+      version: 1,
+      storage: createJSONStorage(() => sessionStorage),
+      partialize: ({ query, contained, letter, tab, selectedId, toPrint }): Session => ({
+        query,
+        contained,
+        letter,
+        tab,
+        selectedId,
+        toPrint,
+      }),
+    },
+  ),
+);
+
+interface Recent {
+  readonly recent: readonly string[];
+  readonly remember: (search: string) => void;
+  readonly forget: (search: string) => void;
+}
+
+export const RECENT_KEY = "cherubini.recent";
+
+// Recent searches are worth finding again at the next visit, as on the desktop, so they
+// live in localStorage; they never leave the browser.
+export const useRecent = create<Recent>()(
+  persist(
+    (set) => ({
+      recent: [],
       remember: (search) => {
         const cleaned = search.trim();
         if (cleaned)
@@ -67,18 +95,10 @@ export const useSession = create<Session & Actions>()(
       forget: (search) => set(({ recent }) => ({ recent: recent.filter((item) => item !== search) })),
     }),
     {
-      name: "cherubini.session",
+      name: RECENT_KEY,
       version: 1,
-      storage: createJSONStorage(() => sessionStorage),
-      partialize: ({ query, contained, letter, tab, selectedId, toPrint, recent }): Session => ({
-        query,
-        contained,
-        letter,
-        tab,
-        selectedId,
-        toPrint,
-        recent,
-      }),
+      storage: createJSONStorage(() => localStorage),
+      partialize: ({ recent }) => ({ recent }),
     },
   ),
 );

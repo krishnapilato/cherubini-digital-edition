@@ -17,7 +17,7 @@ import { useOccurrences } from "./hooks/useOccurrences";
 import { useResults, type Mode } from "./hooks/useResults";
 import { useViewHistory } from "./hooks/useViewHistory";
 import { find } from "./search";
-import { useSession } from "./store";
+import { useRecent, useSession } from "./store";
 import { formatNumber, quantity, vocabularyReady, type Lemma, type Vocabulary } from "./vocabulary";
 
 type Panel = "stampa" | "guida" | null;
@@ -82,8 +82,8 @@ function Explorer({ vocabulary }: Readonly<{ vocabulary: Vocabulary }>) {
   const contained = useSession((state) => state.contained);
   const selectedId = useSession((state) => state.selectedId);
   const printIds = useSession((state) => state.toPrint);
-  const { setQuery, setContained, select, togglePrint, addToPrint, clearPrint, remember, goHome } =
-    useSession.getState();
+  const { setQuery, setContained, select, togglePrint, addToPrint, clearPrint, goHome } = useSession.getState();
+  const { remember } = useRecent.getState();
 
   const [panel, setPanel] = useState<Panel>(null);
   const [toast, setToast] = useState<string | null>(null);

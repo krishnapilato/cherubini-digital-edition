@@ -1,5 +1,6 @@
 import { RotateCw, Trash2 } from "lucide-react";
 import { Component, type ReactNode } from "react";
+import { RECENT_KEY } from "../store";
 
 interface Props {
   readonly children: ReactNode;
@@ -11,6 +12,7 @@ interface State {
 
 const restart = () => {
   sessionStorage.clear();
+  localStorage.removeItem(RECENT_KEY);
   location.reload();
 };
 

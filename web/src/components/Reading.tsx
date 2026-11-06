@@ -46,7 +46,7 @@ export function Reading(props: Props) {
       const current = scope.current?.querySelector(".hit.current");
       if (!current) return;
       current.scrollIntoView({ block: "nearest" });
-      gsap.from(current, { scale: 1.3, duration: 0.4, ease: "back.out(3)" });
+      gsap.from(current, { scale: 1.15, duration: 0.4, ease: "back.out(1.5)" });
     },
     { scope, dependencies: [occurrence, lemma?.id], revertOnUpdate: true },
   );
@@ -143,7 +143,7 @@ export function Reading(props: Props) {
               type="button"
               className="icon-button"
               aria-label="Occorrenza precedente"
-              title="Occorrenza precedente"
+              title="Occorrenza precedente (Maiusc+F3)"
               disabled={definitionRanges.length === 0}
               onClick={props.onPreviousOccurrence}
             >

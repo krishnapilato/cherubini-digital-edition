@@ -1,7 +1,7 @@
 {
   "name": "cherubini-digital-edition",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -19,14 +19,14 @@
     "@gsap/react": "^2.1.2",
     "@tanstack/react-virtual": "^3.14.26",
     "gsap": "^3.15.1",
-    "lucide-react": "^1.69.0",
+    "lucide-react": "^1.70.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "zustand": "^5.0.16"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@playwright/test": "^1.64.1",
+    "@playwright/test": "^1.65.0",
     "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",

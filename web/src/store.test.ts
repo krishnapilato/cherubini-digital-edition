@@ -1,41 +1,60 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { useSession } from "./store";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { useRecent, useSession } from "./store";
+
+// Node offers localStorage only with a backing file: the store gets an in-memory one,
+// in place before the store module reads it.
+vi.hoisted(() => {
+  const items = new Map<string, string>();
+  const memory: Storage = {
+    get length() {
+      return items.size;
+    },
+    clear: () => items.clear(),
+    getItem: (key) => items.get(key) ?? null,
+    key: (index) => [...items.keys()][index] ?? null,
+    removeItem: (key) => items.delete(key),
+    setItem: (key, value) => items.set(key, value),
+  };
+  Object.defineProperty(globalThis, "localStorage", { value: memory, configurable: true });
+});
 
 const session = () => useSession.getState();
+const recents = () => useRecent.getState();
 
 describe("recent searches", () => {
   beforeEach(() => {
-    sessionStorage.clear();
-    useSession.setState({ recent: [] });
+    localStorage.clear();
+    useRecent.setState({ recent: [] });
   });
 
   it("puts the latest search first, trimmed and without duplicates", () => {
-    session().remember("ferro");
-    session().remember("legno");
-    session().remember("  ferro ");
-    expect(session().recent).toEqual(["ferro", "legno"]);
+    recents().remember("ferro");
+    recents().remember("legno");
+    recents().remember("  ferro ");
+    expect(recents().recent).toEqual(["ferro", "legno"]);
   });
 
   it("ignores empty searches", () => {
-    session().remember("   ");
-    expect(session().recent).toEqual([]);
+    recents().remember("   ");
+    expect(recents().recent).toEqual([]);
   });
 
   it("keeps the six most recent", () => {
-    for (const search of ["a", "b", "c", "d", "e", "f", "g"]) session().remember(search);
-    expect(session().recent).toEqual(["g", "f", "e", "d", "c", "b"]);
+    for (const search of ["a", "b", "c", "d", "e", "f", "g"]) recents().remember(search);
+    expect(recents().recent).toEqual(["g", "f", "e", "d", "c", "b"]);
   });
 
   it("forgets a single search", () => {
-    session().remember("ferro");
-    session().remember("legno");
-    session().forget("ferro");
-    expect(session().recent).toEqual(["legno"]);
+    recents().remember("ferro");
+    recents().remember("legno");
+    recents().forget("ferro");
+    expect(recents().recent).toEqual(["legno"]);
   });
 
-  it("saves the session in sessionStorage", () => {
-    session().remember("ferro");
-    expect(sessionStorage.getItem("cherubini.session")).toContain('"recent":["ferro"]');
+  it("keeps them in localStorage, apart from the session", () => {
+    recents().remember("ferro");
+    expect(localStorage.getItem("cherubini.recent")).toContain('"recent":["ferro"]');
+    expect(sessionStorage.getItem("cherubini.session") ?? "").not.toContain("ferro");
   });
 });
 
@@ -53,5 +72,24 @@ describe("print selection", () => {
     session().togglePrint(1);
     session().addToPrint([1, 2, 3]);
     expect(session().toPrint).toEqual([1, 2, 3]);
+  });
+});
+
+describe("selection", () => {
+  beforeEach(() => useSession.setState({ selectedId: 42, tab: "definizioni" }));
+
+  it("starts a new search from its first entry", () => {
+    session().setQuery("ll");
+    expect(session().selectedId).toBeNull();
+  });
+
+  it("starts from the first entry when contained words are switched", () => {
+    session().setContained(false);
+    expect(session().selectedId).toBeNull();
+  });
+
+  it("keeps the open entry when switching tab", () => {
+    session().setTab("lemmi");
+    expect(session().selectedId).toBe(42);
   });
 });
