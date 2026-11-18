@@ -31,7 +31,7 @@ public final class PrintSelection {
             badge.managedProperty().bind(badge.visibleProperty());
         });
         list.setCellFactory(_ -> new PrintCell());
-        list.setPlaceholder(Ui.wrapped("Nessuna voce scelta. Spunta «Da stampare» sulle voci trovate o nella voce aperta."));
+        list.setPlaceholder(Ui.wrapped("Nessuna voce scelta ancora.\nProva a selezionarne qualcuna!"));
         refresh();
     }
 

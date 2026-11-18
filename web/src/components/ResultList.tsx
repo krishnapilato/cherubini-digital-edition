@@ -2,6 +2,7 @@ import { useGSAP } from "@gsap/react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import gsap from "gsap";
 import { useEffect, useLayoutEffect, useRef, type KeyboardEvent, type ReactNode } from "react";
+import { ENTER } from "../motion";
 import { find, type Query } from "../search";
 import type { Lemma } from "../vocabulary";
 import { Highlight, Snippet } from "./Highlight";
@@ -99,7 +100,7 @@ export function ResultList({
     (_, contextSafe) => {
       const animate = contextSafe?.(() => {
         const rows = scroller.current?.querySelectorAll(".row");
-        if (rows?.length) gsap.from(rows, { y: 8, opacity: 0, duration: 0.3, stagger: 0.025, ease: "power2.out" });
+        if (rows?.length) gsap.from(rows, { y: 6, opacity: 0, stagger: 0.025, ...ENTER, duration: 0.35 });
       });
       if (!animate) return;
       const frame = requestAnimationFrame(animate);

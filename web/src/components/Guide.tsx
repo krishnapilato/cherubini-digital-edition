@@ -2,6 +2,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ExternalLink } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { ENTER, EXIT } from "../motion";
 import { Modal } from "./Modal";
 
 const GUIDE_URL = `${import.meta.env.BASE_URL}guida/index.html`;
@@ -44,12 +45,11 @@ export function GuideDialog({ onClosed }: Readonly<{ onClosed: () => void }>) {
       if (!loaded || !waited) return;
       gsap
         .timeline()
-        .to(".loader", { opacity: 0, y: -8, duration: 0.3, ease: "power2.in" })
+        .to(".loader", { opacity: 0, y: -6, ...EXIT })
         .set(".loader", { display: "none" })
         .to("iframe", {
           opacity: 1,
-          duration: 0.45,
-          ease: "power2.out",
+          ...ENTER,
           onStart: () => guideAnimations()?.resume(),
         });
     },
@@ -60,7 +60,6 @@ export function GuideDialog({ onClosed }: Readonly<{ onClosed: () => void }>) {
     <Modal
       className="guide"
       hidden={{ y: 12, scale: 0.99, opacity: 0 }}
-      opening={{ duration: 0.55, ease: "power2.out" }}
       title="Guida all'uso"
       onOpened={() => setOpened(true)}
       onClosed={onClosed}

@@ -17,22 +17,30 @@ The project picks up *Voci tecniche*, the Microsoft Access 2000 program made by 
 
 ## Screenshots
 
+Both editions at 1920 × 1080.
+
 <table>
   <tr>
-    <td align="center">
-      <img src="docs/screenshots/web-lente.png" height="330" alt="Home page on a computer: search, recent searches and letters">
-      <img src="docs/screenshots/phone-lente.png" height="330" alt="Home page on a phone">
-    </td>
+    <th></th>
+    <th width="48%">Web</th>
+    <th width="48%">Desktop</th>
   </tr>
   <tr>
-    <td align="center">
-      <img src="docs/screenshots/phone-ricerca.png" height="330" alt="«Brandenàa» open on a phone, with «ferro» highlighted">
-      <img src="docs/screenshots/web-ricerca.png" height="330" alt="Search for «ferro» on a computer: 97 entries contain it in their definition; «Brandenàa» is open with the word highlighted">
-    </td>
+    <th>Home</th>
+    <td><img src="docs/screenshots/web-home.png" width="100%" alt="Web edition home page: search, recent searches and letters"></td>
+    <td><img src="docs/screenshots/desktop-home.png" width="100%" alt="Desktop edition home page: search, recent searches and letters"></td>
+  </tr>
+  <tr>
+    <th>Search</th>
+    <td><img src="docs/screenshots/web-search.png" width="100%" alt="Web edition: search for «ferro», 97 entries contain it in their definition; «Brandenàa» is open with the word highlighted"></td>
+    <td><img src="docs/screenshots/desktop-search.png" width="100%" alt="Desktop edition: search for «ferro», 97 entries contain it in their definition; «Brandenàa» is open with the word highlighted"></td>
+  </tr>
+  <tr>
+    <th>Print</th>
+    <td><img src="docs/screenshots/web-print.png" width="100%" alt="Web edition: the print panel with three chosen entries"></td>
+    <td><img src="docs/screenshots/desktop-print.png" width="100%" alt="Desktop edition: the print panel with three chosen entries"></td>
   </tr>
 </table>
-
-<!-- ![Desktop edition while browsing a letter](docs/screenshots/desktop.png) -->
 
 ## What it does
 
@@ -61,7 +69,7 @@ The project picks up *Voci tecniche*, the Microsoft Access 2000 program made by 
 
 ## Desktop edition
 
-Requires JDK 27. Maven doesn't need to be installed: the wrapper (`mvnw`, `mvnw.cmd` on Windows) downloads the version fixed in `.mvn/wrapper/maven-wrapper.properties`, Maven 3.10.1, the same one CI and releases use.
+Requires JDK 27; CI and releases use Oracle JDK 27.0.1.1, the same as the development computer. Maven doesn't need to be installed: the wrapper (`mvnw`, `mvnw.cmd` on Windows) downloads the version fixed in `.mvn/wrapper/maven-wrapper.properties`, Maven 3.10.1, the same one CI and releases use.
 
 ```bash
 cd desktop
@@ -70,11 +78,11 @@ cd desktop
 
 `./mvnw package` creates `target/cherubini.jar`, a single jar with JavaFX for Windows only: the desktop edition is for Windows ([decision 0002](docs/decisions/0002-portable-unsigned-desktop-packages.md)). The jar bundles `data/cherubini.json` as it is, and the app reads it at startup ([decision 0018](docs/decisions/0018-desktop-reads-the-json.md)). The guide also comes from `guide/`: the `?` button extracts it to a temporary folder and opens it in the browser.
 
-The code is checked on every build: `javac` warnings (`-Xlint:all`) are errors, and PMD, with the rules in `desktop/pmd-ruleset.xml`, stops the build on unused imports, fields, variables or methods, overly complex code and common mistakes, in the app and in its tests. PMD runs once the tests are compiled, so it applies to `./mvnw test`, `./mvnw verify`, the IntelliJ run configuration and release builds, but not to `./mvnw compile` or `./mvnw javafx:run`. `./mvnw test` runs the JUnit tests (see [Tests and checks](#tests-and-checks)).
+The code is checked on every build: `javac` warnings (`-Xlint:all`) are errors, and PMD, with the rules in `desktop/pmd-ruleset.xml`, stops the build on unused imports, fields, variables or methods, overly complex code and common mistakes, in the app and in its tests. Right after it, the dependency analysis stops the build on any dependency that is declared but unused, or used but undeclared; the few it can't judge are excepted in `pom.xml` with the reason. Both run once the tests are compiled, so they apply to `./mvnw test`, `./mvnw verify`, the IntelliJ run configuration and release builds, but not to `./mvnw compile` or `./mvnw javafx:run`. `./mvnw test` runs the JUnit tests (see [Tests and checks](#tests-and-checks)).
 
 ## Web edition
 
-Requires Node.js 26 or later; CI and the site build use the newest Node.js 26.
+Requires Node.js 26 or later; CI and the site build use exactly the version in `web/.node-version`, 26.13.1, the same as the development computer.
 
 ```bash
 cd web
@@ -82,7 +90,7 @@ npm i
 npm run dev
 ```
 
-The app opens at <http://localhost:5173/cherubini-digital-edition/> and the guide at `/guida/`, served directly from `guide/`. The `overrides` in `package.json` are there because typescript-eslint doesn't declare support for TypeScript 7 yet, nor eslint-plugin-jsx-a11y for ESLint 10.
+Before starting, `npm run dev` runs `npm run check` (about 20 seconds): if any test or check fails, the development server doesn't start. The app then opens at <http://localhost:5173/cherubini-digital-edition/> and the guide at `/guida/`, served directly from `guide/`. The `overrides` in `package.json` are there because typescript-eslint doesn't declare support for TypeScript 7 yet, nor eslint-plugin-jsx-a11y for ESLint 10.
 
 | Command | What it does |
 |---|---|
@@ -92,6 +100,9 @@ The app opens at <http://localhost:5173/cherubini-digital-edition/> and the guid
 | `npm test` | Tests with Vitest |
 | `npm run e2e` | Interface tests with Playwright on the production build (requires Chrome) |
 | `npm run build` | Type check, lint, format check and production build in `web/dist` |
+| `npm run knip` | Fails on dependencies declared but unused, or used but undeclared, and on unused files and exports |
+| `npm run size` | Fails when the built JavaScript or CSS, gzipped, goes over the budget in `.size-limit.json` (about 10% above today) |
+| `npm run check` | Everything: `npm run knip`, `npm test`, `npm run build`, `npm run size` and `npm run e2e`, stopping at the first failure; CI and the site deployment run it too |
 
 Some technical choices:
 
@@ -127,7 +138,7 @@ Automation:
 ## Publishing
 
 - **Site**: every push to `main` that touches `web/`, `guide/`, `tests/` or `data/cherubini.json` rebuilds the site and publishes it on GitHub Pages.
-- **Desktop**: a `v*` tag (for example `v1.0.0`) builds the portable Windows package, `Vocabolario-Cherubini-<version>.zip`, and creates the GitHub release.
+- **Desktop**: a `v*` tag (for example `v1.0.0`) builds the portable Windows package, `Vocabolario-Cherubini-<version>.zip`, and creates the GitHub release. The release stops if the app goes over its size budget, about 10% above 1.0.2: 68 MB on disk (62.2 MB today) and 49 MB for the zip (44.7 MB).
 - **Version**: it lives in `desktop/pom.xml` and `web/package.json` only; both footers read it from there. A test fails when the two differ, and the release stops when the tag doesn't match them.
 
   The package isn't signed; the release notes explain how to get past the warning on first launch. Before being published, the package is started with `--smoke-test`: the app opens its window on the JavaFX headless platform, checks that it shows the vocabulary and exits, and if anything is wrong the release stops. Each release also publishes `SHA256SUMS.txt` with the SHA-256 fingerprint of the package, to verify that the downloaded file is intact.

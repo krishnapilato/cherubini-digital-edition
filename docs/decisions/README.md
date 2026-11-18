@@ -10,7 +10,7 @@ Why the project is built the way it is. Each file records one decision: the situ
 | [0004](0004-search-written-twice-with-shared-cases.md) | Search written twice, with shared cases | Accepted |
 | [0005](0005-data-and-storage.md) | One JSON source, no data leaves the device | Accepted, amended by 0017 and 0018 |
 | [0006](0006-guide-delivery.md) | One guide, opened differently per edition | Accepted |
-| [0007](0007-warnings-fail-the-build.md) | Warnings fail the build | Accepted |
+| [0007](0007-warnings-fail-the-build.md) | Warnings fail the build | Accepted, extended by 0020 |
 | [0008](0008-tests-and-release-gates.md) | Real-app tests and release gates | Accepted |
 | [0009](0009-animations-always-on.md) | Animations always on | Accepted |
 | [0010](0010-java-code-style.md) | Java code style | Accepted |
@@ -19,7 +19,8 @@ Why the project is built the way it is. Each file records one decision: the situ
 | [0013](0013-releases.md) | Keep only the latest release | Accepted |
 | [0014](0014-remove-volume-viewer.md) | Remove the volume viewer | Accepted |
 | [0015](0015-content-security-policy.md) | Content Security Policy on the web edition | Accepted |
-| [0016](0016-pinned-build-tools.md) | Pinned build tools | Accepted |
+| [0016](0016-pinned-build-tools.md) | Pinned build tools | Accepted, changed by 0020 |
 | [0017](0017-recent-searches-persist-on-the-web.md) | Recent searches persist on the web | Accepted |
 | [0018](0018-desktop-reads-the-json.md) | The desktop edition reads the JSON directly | Accepted |
 | [0019](0019-view-package.md) | The window's pieces live in their own package | Accepted |
+| [0020](0020-same-tools-and-every-check-everywhere.md) | The same tools and every check, everywhere | Accepted |

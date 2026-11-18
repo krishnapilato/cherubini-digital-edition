@@ -1,6 +1,6 @@
 # 0016. Pinned build tools
 
-**Status:** Accepted
+**Status:** Accepted; Node.js and JDK changed by [0020](0020-same-tools-and-every-check-everywhere.md)
 
 ## Context
 

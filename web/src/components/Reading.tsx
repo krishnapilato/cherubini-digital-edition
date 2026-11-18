@@ -2,6 +2,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ArrowLeft, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, SkipBack, SkipForward } from "lucide-react";
 import { useRef } from "react";
+import { ENTER } from "../motion";
 import type { Range } from "../search";
 import { formatNumber, type Lemma } from "../vocabulary";
 import { Highlight } from "./Highlight";
@@ -46,7 +47,7 @@ export function Reading(props: Props) {
       const current = scope.current?.querySelector(".hit.current");
       if (!current) return;
       current.scrollIntoView({ block: "nearest" });
-      gsap.from(current, { scale: 1.15, duration: 0.4, ease: "back.out(1.5)" });
+      gsap.from(current, { scale: 1.06, ...ENTER });
     },
     { scope, dependencies: [occurrence, lemma?.id], revertOnUpdate: true },
   );

@@ -1,0 +1,14 @@
+[
+  {
+    "name": "JavaScript",
+    "path": "dist/assets/*.js",
+    "gzip": true,
+    "limit": "130 kB"
+  },
+  {
+    "name": "CSS",
+    "path": "dist/assets/*.css",
+    "gzip": true,
+    "limit": "4.7 kB"
+  }
+]

@@ -2,6 +2,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { Clock, Search, X } from "lucide-react";
 import { useRef, type KeyboardEvent, type RefObject } from "react";
+import { ENTER, EXIT } from "../motion";
 import { MAX_QUERY_LENGTH } from "../search";
 import { useRecent, useSession } from "../store";
 import { describeLetter, LETTERS } from "../vocabulary";
@@ -23,22 +24,20 @@ export function Lente({ onKeyDown, inputRef, countOf }: Props) {
 
   const { contextSafe } = useGSAP(
     () => {
-      gsap.from(".lente-item", { y: 18, opacity: 0, duration: 0.7, stagger: 0.07, ease: "power3.out" });
+      gsap.from(".lente-item", { y: 12, opacity: 0, stagger: 0.07, ...ENTER });
       gsap.from(".pill", {
-        scale: 0.85,
+        scale: 0.94,
         opacity: 0,
-        duration: 0.45,
         stagger: 0.012,
-        delay: 0.35,
-        ease: "back.out(1.4)",
+        delay: 0.3,
+        ...ENTER,
       });
     },
     { scope },
   );
 
   const vanish = contextSafe((chip: HTMLElement | null, search: string) => {
-    if (chip)
-      gsap.to(chip, { scale: 0.6, opacity: 0, duration: 0.22, ease: "power2.in", onComplete: () => forget(search) });
+    if (chip) gsap.to(chip, { scale: 0.8, opacity: 0, ...EXIT, onComplete: () => forget(search) });
     else forget(search);
   });
 

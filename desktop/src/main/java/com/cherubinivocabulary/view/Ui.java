@@ -8,6 +8,9 @@ import javafx.util.Duration;
 
 public final class Ui {
     public static final String SECONDARY = "secondary";
+    // The same timing as the web edition (web/src/motion.ts): things come in a little slower than they go away.
+    public static final Duration ENTER = Duration.millis(500);
+    public static final Duration EXIT = Duration.millis(300);
 
     private Ui() {}
 
@@ -18,7 +21,7 @@ public final class Ui {
 
     public static void fadeIn(Node node) {
         node.setOpacity(0);
-        Animations.fadeIn(node, Duration.millis(220)).play();
+        Animations.fadeIn(node, ENTER).play();
     }
 
     public static void focusAtEnd(TextField field) {

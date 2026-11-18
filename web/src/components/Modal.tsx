@@ -2,13 +2,12 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { X } from "lucide-react";
 import { useEffect, useId, useState, type ReactNode } from "react";
+import { ENTER, EXIT } from "../motion";
 
 interface Props {
   readonly className: string;
   /** Where the dialog comes from when it opens and goes back to when it closes. */
   readonly hidden: gsap.TweenVars;
-  /** Duration and ease of the opening, when they differ from the default. */
-  readonly opening?: gsap.TweenVars | undefined;
   readonly title: string;
   readonly subtitle?: string | undefined;
   readonly actions?: ReactNode;
@@ -22,7 +21,7 @@ interface Props {
 // inert and gives focus back to the button that opened it. Esc normally plays the closing
 // animation, but the browser may close the dialog by itself, so "close" is the single
 // place where the dialog is reported as closed.
-export function Modal({ className, hidden, opening, title, subtitle, actions, onOpened, onClosed, children }: Props) {
+export function Modal({ className, hidden, title, subtitle, actions, onOpened, onClosed, children }: Props) {
   const [dialog, setDialog] = useState<HTMLDialogElement | null>(null);
   const titleId = useId();
 
@@ -35,9 +34,7 @@ export function Modal({ className, hidden, opening, title, subtitle, actions, on
       if (dialog)
         gsap.from(dialog, {
           ...hidden,
-          duration: 0.45,
-          ease: "power3.out",
-          ...opening,
+          ...ENTER,
           onComplete: () => onOpened?.(),
         });
     },
@@ -47,8 +44,7 @@ export function Modal({ className, hidden, opening, title, subtitle, actions, on
   const close = contextSafe(() => {
     gsap.to(dialog, {
       ...hidden,
-      duration: 0.25,
-      ease: "power2.in",
+      ...EXIT,
       overwrite: true,
       onComplete: () => dialog?.close(),
     });

@@ -1,0 +1,7 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema-jsonc.json",
+  // eslint-plugin-sonarjs loads TypeScript's JavaScript API by name, as "@typescript/old":
+  // TypeScript 7 no longer has one, and this package provides it. Knip can't see a require
+  // made at run time inside another package.
+  "ignoreDependencies": ["@typescript/typescript6"],
+}

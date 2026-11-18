@@ -5,7 +5,6 @@ import module javafx.controls;
 import atlantafx.base.util.Animations;
 import com.cherubinivocabulary.History;
 import javafx.scene.control.Label;
-import javafx.util.Duration;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 /**
@@ -54,8 +53,8 @@ public final class RecentSearches {
     }
 
     private void vanish(HBox chip, String text) {
-        var fade = Animations.fadeOut(chip, Duration.millis(180));
-        var shrink = Animations.zoomOut(chip, Duration.millis(180), 0.6);
+        var fade = Animations.fadeOut(chip, Ui.EXIT);
+        var shrink = Animations.zoomOut(chip, Ui.EXIT, 0.8);
         var vanish = new ParallelTransition(fade, shrink);
         vanish.setOnFinished(_ -> {
             history.forget(text);

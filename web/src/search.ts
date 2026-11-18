@@ -1,4 +1,4 @@
-export const MAX_WORDS = 4;
+const MAX_WORDS = 4;
 // Four common words (up to 12 letters) or a whole pasted lemma (up to 50 characters) fit: the limit only stops huge pastes.
 export const MAX_QUERY_LENGTH = 60;
 

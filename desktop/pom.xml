@@ -6,13 +6,13 @@
 
     <groupId>com.cherubinivocabulary</groupId>
     <artifactId>cherubini-vocabulary</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <name>cherubini-vocabulary</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>27</maven.compiler.release>
-        <javafx.version>27.0.1</javafx.version>
+        <javafx.version>27.0.1.1</javafx.version>
         <pmd.version>7.29.0</pmd.version>
         <jackson.version>3.3.0</jackson.version>
         <main.class>com.cherubinivocabulary.Launcher</main.class>
@@ -48,6 +48,12 @@
             <groupId>org.fxmisc.richtext</groupId>
             <artifactId>richtextfx</artifactId>
             <version>0.11.7</version>
+        </dependency>
+        <!-- Used directly (VirtualizedScrollPane), so declared rather than left to arrive through RichTextFX. -->
+        <dependency>
+            <groupId>org.fxmisc.flowless</groupId>
+            <artifactId>flowless</artifactId>
+            <version>0.7.4</version>
         </dependency>
         <!-- Reads data/cherubini.json, bundled as it is. -->
         <dependency>
@@ -240,6 +246,34 @@
                                     <includes>*.dll</includes>
                                 </artifactItem>
                             </artifactItems>
+                        </configuration>
+                    </execution>
+                    <!-- Every declared dependency must be used and every used one declared: any
+                         difference fails the build, next to PMD. -->
+                    <execution>
+                        <id>dependency-analysis</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>analyze-only</goal>
+                        </goals>
+                        <configuration>
+                            <failOnWarning>true</failOnWarning>
+                            <ignoredUnusedDeclaredDependencies>
+                                <!-- Declared without a classifier, found by the analysis under "win". -->
+                                <ignoredUnusedDeclaredDependency>org.openjfx:javafx-controls</ignoredUnusedDeclaredDependency>
+                                <ignoredUnusedDeclaredDependency>org.openjfx:javafx-fxml</ignoredUnusedDeclaredDependency>
+                                <!-- Used through the fth-* icon names in main-view.fxml, invisible to the bytecode. -->
+                                <ignoredUnusedDeclaredDependency>org.kordamp.ikonli:ikonli-feather-pack</ignoredUnusedDeclaredDependency>
+                                <!-- The bundle of JUnit's API, parameters and engine. -->
+                                <ignoredUnusedDeclaredDependency>org.junit.jupiter:junit-jupiter</ignoredUnusedDeclaredDependency>
+                            </ignoredUnusedDeclaredDependencies>
+                            <ignoredUsedUndeclaredDependencies>
+                                <!-- JavaFX's modules come as one family through javafx-controls and javafx-fxml. -->
+                                <ignoredUsedUndeclaredDependency>org.openjfx:*</ignoredUsedUndeclaredDependency>
+                                <!-- Parts of the junit-jupiter bundle. -->
+                                <ignoredUsedUndeclaredDependency>org.junit.jupiter:junit-jupiter-api</ignoredUsedUndeclaredDependency>
+                                <ignoredUsedUndeclaredDependency>org.junit.jupiter:junit-jupiter-params</ignoredUsedUndeclaredDependency>
+                            </ignoredUsedUndeclaredDependencies>
                         </configuration>
                     </execution>
                 </executions>

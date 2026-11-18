@@ -19,10 +19,18 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # The same JDK as on the development computer, Oracle JDK 27.0.1.1, raised together with it.
+      # setup-java turns a four-part version into "27.0.1+1" and can't find it at Oracle, so the
+      # official archive is downloaded here and handed to it as a file.
+      - name: Oracle JDK
+        run: curl -fsSL -o "$RUNNER_TEMP/jdk.zip" https://download.oracle.com/java/27/archive/jdk-27.0.1.1_windows-x64_bin.zip
+
       - uses: actions/setup-java@v6
         with:
-          distribution: temurin
-          java-version: "27"
+          distribution: jdkfile
+          jdkFile: ${{ runner.temp }}/jdk.zip
+          java-version: "27.0.1"
+          architecture: x64
           cache: maven
           cache-dependency-path: desktop/pom.xml
 
@@ -36,6 +44,9 @@ jobs:
           fi
           echo "VERSION=$version" >> "$GITHUB_ENV"
           echo "ZIP=Vocabolario-Cherubini-$version.zip" >> "$GITHUB_ENV"
+
+      - name: Tool versions
+        run: ./mvnw -v
 
       - name: Jar
         run: ./mvnw -B -q package
@@ -72,6 +83,21 @@ jobs:
       - name: Zip
         shell: pwsh
         run: Compress-Archive -Path target/dist/Cherubini -DestinationPath "target/$env:ZIP"
+
+      # About 10% above the sizes of 1.0.2 (62.2 MB on disk, 44.7 MB zipped), as for the web's
+      # JavaScript and CSS. A new JDK that weighs more is a deliberate raise of these numbers.
+      - name: Size budget
+        run: |
+          budget() {
+            local name=$1 bytes=$2 limit_mb=$3
+            printf '%s: %d.%d MB of %d MB\n' "$name" $((bytes / 1000000)) $((bytes % 1000000 / 100000)) "$limit_mb"
+            if (( bytes > limit_mb * 1000000 )); then
+              echo "::error::$name is over its budget of $limit_mb MB."
+              return 1
+            fi
+          }
+          budget "App on disk" "$(du -sb target/dist/Cherubini | cut -f1)" 68
+          budget "Download" "$(stat -c %s "target/$ZIP")" 49
 
       # The fingerprint lets anyone check that the downloaded file is exactly the one built here.
       - name: Checksum

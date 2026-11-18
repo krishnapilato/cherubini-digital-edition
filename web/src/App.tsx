@@ -16,6 +16,7 @@ import { useArrowKeys } from "./hooks/useArrowKeys";
 import { useOccurrences } from "./hooks/useOccurrences";
 import { useResults, type Mode } from "./hooks/useResults";
 import { useViewHistory } from "./hooks/useViewHistory";
+import { ENTER } from "./motion";
 import { find } from "./search";
 import { useRecent, useSession } from "./store";
 import { quantity, vocabularyReady, type Lemma, type Vocabulary } from "./vocabulary";
@@ -107,8 +108,7 @@ function Explorer({ vocabulary }: Readonly<{ vocabulary: Vocabulary }>) {
 
   useGSAP(
     () => {
-      if (mode !== "lente")
-        gsap.from(".workspace .card", { y: 14, opacity: 0, duration: 0.45, stagger: 0.06, ease: "power3.out" });
+      if (mode !== "lente") gsap.from(".workspace .card", { y: 10, opacity: 0, stagger: 0.06, ...ENTER });
     },
     { scope: root, dependencies: [mode], revertOnUpdate: true },
   );

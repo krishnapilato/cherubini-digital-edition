@@ -1,6 +1,6 @@
 # 0007. Warnings fail the build
 
-**Status:** Accepted
+**Status:** Accepted; extended by [0020](0020-same-tools-and-every-check-everywhere.md)
 
 ## Context
 

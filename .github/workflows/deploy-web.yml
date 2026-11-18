@@ -31,19 +31,17 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 26
-          check-latest: true
+          # The same Node.js as on the development computer; raised together with it.
+          node-version-file: web/.node-version
           cache: npm
           cache-dependency-path: web/package-lock.json
 
-      - run: npm i
+      # Exactly the versions in package-lock.json, the ones tested locally: any mismatch stops here.
+      - run: npm ci
 
-      - run: npm test
-
-      - run: npm run build
-
-      # Interface tests on the production build, in the Chrome already installed on the runner.
-      - run: npm run e2e
+      # The same gate as "npm run dev": unused dependencies, tests, types, lint, formatting,
+      # build and interface tests in the Chrome already installed on the runner.
+      - run: npm run check
 
       - uses: actions/configure-pages@v6
 

@@ -35,7 +35,11 @@ export function PrintPanel({
       {(close) => (
         <>
           {count === 0 ? (
-            <p className="empty">Nessuna voce scelta. Spunta «Da stampare» sulle voci trovate o nella voce aperta.</p>
+            <p className="empty">
+              Nessuna voce scelta ancora.
+              <br />
+              Prova a selezionarne qualcuna!
+            </p>
           ) : (
             <ul className="print-list">
               {chosen.map((lemma) => (
@@ -78,7 +82,7 @@ export function PrintPanel({
               <Printer size={17} aria-hidden="true" />
               {count === 0 ? "Stampa" : `Stampa ${quantity(count, "voce", "voci")}`}
             </button>
-            <p className="note">Si apre la finestra di stampa del browser per scegliere la stampante.</p>
+            <p className="note">Potrai scegliere la stampante dal menu di stampa del browser.</p>
           </footer>
         </>
       )}

@@ -1,6 +1,7 @@
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { useRef } from "react";
+import { ENTER, EXIT } from "../motion";
 
 interface Props {
   readonly message: string;
@@ -14,8 +15,8 @@ export function Toast({ message, onDone }: Props) {
     () => {
       gsap
         .timeline({ onComplete: onDone })
-        .from(ref.current, { y: 16, opacity: 0, duration: 0.3, ease: "power3.out" })
-        .to(ref.current, { y: 8, opacity: 0, duration: 0.3, delay: 2.6 });
+        .from(ref.current, { y: 12, opacity: 0, ...ENTER })
+        .to(ref.current, { y: 6, opacity: 0, ...EXIT, delay: 2.6 });
     },
     { dependencies: [message], scope: ref, revertOnUpdate: true },
   );

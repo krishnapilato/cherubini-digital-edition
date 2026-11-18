@@ -164,7 +164,7 @@ public final class MainController {
         recent = new RecentSearches(recentPane, history, this::repeat);
         setUpList();
         modal.setAlignment(Pos.TOP_RIGHT);
-        modal.usePredefinedTransitionFactories(Side.RIGHT);
+        modal.usePredefinedTransitionFactories(Side.RIGHT, Ui.ENTER, Ui.EXIT);
 
         lemmaList.sceneProperty().addListener((_, _, scene) -> {
             if (scene == null) return;

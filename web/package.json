@@ -1,10 +1,14 @@
 {
   "name": "cherubini-digital-edition",
   "private": true,
-  "version": "1.0.2",
+  "version": "1.0.3",
   "type": "module",
   "scripts": {
+    "predev": "npm run check",
     "dev": "vite",
+    "check": "npm run knip && npm test && npm run build && npm run size && npm run e2e",
+    "knip": "knip",
+    "size": "size-limit",
     "typecheck": "tsc -b",
     "lint": "eslint . --max-warnings 0",
     "test": "vitest run",
@@ -19,7 +23,7 @@
     "@gsap/react": "^2.1.2",
     "@tanstack/react-virtual": "^3.14.26",
     "gsap": "^3.15.1",
-    "lucide-react": "^1.73.0",
+    "lucide-react": "^1.75.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "zustand": "^5.1.0"
@@ -27,6 +31,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.65.1",
+    "@size-limit/file": "^14.3.0",
     "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
@@ -38,11 +43,13 @@
     "eslint-plugin-react-refresh": "^0.5.8",
     "eslint-plugin-sonarjs": "^4.2.2",
     "globals": "^17.14.0",
+    "knip": "^6.45.1",
     "prettier": "^3.10.1",
+    "size-limit": "^14.3.0",
     "typescript": "~7.0.2",
-    "typescript-eslint": "^8.72.2",
+    "typescript-eslint": "^8.73.0",
     "vite": "^8.3.8",
-    "vitest": "^5.1.0"
+    "vitest": "^5.1.1"
   },
   "overrides": {
     "eslint-plugin-jsx-a11y": {
