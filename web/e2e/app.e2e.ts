@@ -81,7 +81,8 @@ test.describe("on a phone", () => {
     await expect(page.getByRole("button", { name: /^Anèll/ })).toBeVisible();
     for (const control of await page.locator(".topbar button, .row-check, .segmented button:not(:disabled)").all()) {
       const box = await control.boundingBox();
-      expect(Math.min(box?.width ?? 0, box?.height ?? 0)).toBeGreaterThanOrEqual(44);
+      // Controls at fractional positions can measure 43.99998 px for a 44 px box.
+      expect(Math.min(box?.width ?? 0, box?.height ?? 0)).toBeGreaterThanOrEqual(44 - 0.01);
     }
     expect(await page.evaluate("document.documentElement.scrollWidth")).toBe(375);
   });
