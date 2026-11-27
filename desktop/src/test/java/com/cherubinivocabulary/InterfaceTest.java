@@ -241,16 +241,15 @@ class InterfaceTest {
     @Test
     void changingSearchesAndBrowsingKeepsTheInterfaceResponsive() {
         search("a");
-        for (var term : List.of("l", "ll", "ferro", "zzzzzzzz", "a", "", "tel", "ferro")) {
-            run(() -> node(BAR_SEARCH, TextInputControl.class).setText(term));
-            waitUntil("the results reflect the new query", () -> term.isEmpty()
-                    ? node(LENTE).isVisible()
-                    : node("searchSummary", Label.class).getText().startsWith("«" + term + "»"));
-            if (!term.isEmpty()) {
-                run(() -> lemmaList().getSelectionModel().selectLast());
-                run(() -> lemmaList().getSelectionModel().selectFirst());
-            }
-        }
+        changeSearchAndBrowse("l");
+        changeSearchAndBrowse("ll");
+        changeSearchAndBrowse(FERRO);
+        changeSearchAndBrowse("zzzzzzzz");
+        changeSearchAndBrowse("a");
+        run(() -> node(BAR_SEARCH, TextInputControl.class).setText(""));
+        waitUntil("the start page is shown", () -> node(LENTE).isVisible());
+        changeSearchAndBrowse("tel");
+        changeSearchAndBrowse(FERRO);
         assertEquals(ANELL, selectedLemma());
     }
 
@@ -283,37 +282,11 @@ class InterfaceTest {
 
     @Test
     void scrollingQuicklyThroughTheResultsKeepsTheCellSizesConsistent() {
-        var warnings = new ArrayList<String>();
-        var handler = new Handler() {
-            @Override
-            public void publish(LogRecord logRecord) {
-                warnings.add(logRecord.getMessage());
-            }
-
-            @Override
-            public void flush() { }
-
-            @Override
-            public void close() { }
-        };
-        var controls = Logger.getLogger("javafx.scene.control");
-        controls.addHandler(handler);
-        try {
+        var warnings = captureControlWarnings(() -> {
             search("a");
             var flow = onFx(() -> (VirtualFlow<?>) lemmaList().lookup(".virtual-flow"));
-            for (var round = 0; round < 10; round++) {
-                for (var step = 0; step < 30; step++) run(() -> {
-                    flow.scrollPixels(1500);
-                    lemmaList().layout();
-                });
-                for (var step = 0; step < 30; step++) run(() -> {
-                    flow.scrollPixels(-1500);
-                    lemmaList().layout();
-                });
-            }
-        } finally {
-            controls.removeHandler(handler);
-        }
+            scrollBackAndForth(flow);
+        });
         assertEquals(List.of(), warnings);
     }
 
@@ -396,6 +369,50 @@ class InterfaceTest {
             assertFalse(badge.isVisible());
             assertFalse(badge.isManaged());
         });
+    }
+
+    private void changeSearchAndBrowse(String term) {
+        run(() -> node(BAR_SEARCH, TextInputControl.class).setText(term));
+        waitUntil("the results reflect the new query", () -> node("searchSummary", Label.class).getText().startsWith("«" + term + "»"));
+        run(() -> lemmaList().getSelectionModel().selectLast());
+        run(() -> lemmaList().getSelectionModel().selectFirst());
+    }
+
+    private static List<String> captureControlWarnings(Runnable action) {
+        var warnings = new ArrayList<String>();
+        var handler = new Handler() {
+            @Override
+            public void publish(LogRecord logRecord) {
+                warnings.add(logRecord.getMessage());
+            }
+
+            @Override
+            public void flush() { }
+
+            @Override
+            public void close() { }
+        };
+        var controls = Logger.getLogger("javafx.scene.control");
+        controls.addHandler(handler);
+        try {
+            action.run();
+        } finally {
+            controls.removeHandler(handler);
+        }
+        return warnings;
+    }
+
+    private void scrollBackAndForth(VirtualFlow<?> flow) {
+        for (var round = 0; round < 10; round++) {
+            for (var step = 0; step < 30; step++) run(() -> {
+                flow.scrollPixels(1500);
+                lemmaList().layout();
+            });
+            for (var step = 0; step < 30; step++) run(() -> {
+                flow.scrollPixels(-1500);
+                lemmaList().layout();
+            });
+        }
     }
 
     private void search(String text) {
